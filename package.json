@@ -1,0 +1,28 @@
+{
+    "name": "url-parser",
+    "description": "A quick and intuitive URL parser which provides a straight-forward and powerful mechanism for parsing URLs and mapping path parameters.",
+    "version": "0.0.1",
+    "author": "David Pate <me@davidtpate.com> (http://davidtpate.com)",
+    "keywords": [
+        "url",
+        "parser"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/DavidTPate/url-parser"
+    },
+    "bugs" : {
+        "url": "https://github.com/DavidTPate/url-parser/issues"
+    },
+    "license": "MIT",
+    "devDependencies": {
+        "istanbul": "0.3.0",
+        "mocha": "~1.20.0",
+        "should": "~4.0.4"
+    },
+    "scripts": {
+        "test": "mocha --check-leaks --bail --reporter spec test/",
+        "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --check-leaks --reporter dot test/",
+        "test-travis": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --check-leaks --reporter spec test/"
+    }
+}

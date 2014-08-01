@@ -1,0 +1,24 @@
+{
+  "name": "url-parser",
+  "description": "A quick and intuitive URL parser which provides a straight-forward and powerful mechanism for parsing URLs and mapping path parameters.",
+  "version": "0.0.1",
+  "ignore": [
+    "test",
+    "**/.*",
+    "node_modules"
+  ],
+  "main": "index.js",
+  "homepage": "https://github.com/DavidTPate/url-parser",
+  "authors": [
+    "David Pate <me@davidtpate.com>"
+  ],
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "url",
+    "parse",
+    "parser"
+  ],
+  "license": "MIT"
+}
