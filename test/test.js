@@ -154,6 +154,204 @@ describe('url-parser(url)', function () {
         parsed.hash.should.be.exactly('david-rules');
         parsed.href.should.be.exactly('one/two/three?value=abc&value=123&value2=123#david-rules');
     });
+    it('should parse a document relative URL with triplicate query parameters', function () {
+        var parsed = urlParser.parse('one/two/three?value=abc&value=123&value=123');
+
+        (!!!parsed.protocol).should.be.true;
+        (!!!parsed.username).should.be.true;
+        (!!!parsed.password).should.be.true;
+        (!!!parsed.hostname).should.be.true;
+        (!!!parsed.host).should.be.true;
+        (!!!parsed.tld).should.be.true;
+        (!!!parsed.port).should.be.true;
+        parsed.pathname.should.be.exactly('one/two/three');
+        parsed.path[0].should.be.exactly('one');
+        parsed.path[1].should.be.exactly('two');
+        parsed.path[2].should.be.exactly('three');
+        (!!!parsed.params).should.be.true;
+        parsed.search.should.be.exactly('value=abc&value=123&value=123');
+        parsed.query.value[0].should.be.exactly('abc');
+        parsed.query.value[1].should.be.exactly('123');
+        parsed.query.value[2].should.be.exactly('123');
+        (!!!parsed.hash).should.be.true;
+        parsed.href.should.be.exactly('one/two/three?value=abc&value=123&value=123');
+    });
+    it('should parse an URL with an empty query parameter value', function () {
+        var parsed = urlParser.parse('one/two/three?value=');
+
+        (!!!parsed.protocol).should.be.true;
+        (!!!parsed.username).should.be.true;
+        (!!!parsed.password).should.be.true;
+        (!!!parsed.hostname).should.be.true;
+        (!!!parsed.host).should.be.true;
+        (!!!parsed.tld).should.be.true;
+        (!!!parsed.port).should.be.true;
+        parsed.pathname.should.be.exactly('one/two/three');
+        parsed.path[0].should.be.exactly('one');
+        parsed.path[1].should.be.exactly('two');
+        parsed.path[2].should.be.exactly('three');
+        (!!!parsed.params).should.be.true;
+        parsed.search.should.be.exactly('value=');
+        parsed.query.value.should.be.exactly('');
+        (!!!parsed.hash).should.be.true;
+        parsed.href.should.be.exactly('one/two/three?value=');
+    });
+    it('should parse an URL with an empty query parameter missing an equals', function () {
+        var parsed = urlParser.parse('one/two/three?value');
+
+        (!!!parsed.protocol).should.be.true;
+        (!!!parsed.username).should.be.true;
+        (!!!parsed.password).should.be.true;
+        (!!!parsed.hostname).should.be.true;
+        (!!!parsed.host).should.be.true;
+        (!!!parsed.tld).should.be.true;
+        (!!!parsed.port).should.be.true;
+        parsed.pathname.should.be.exactly('one/two/three');
+        parsed.path[0].should.be.exactly('one');
+        parsed.path[1].should.be.exactly('two');
+        parsed.path[2].should.be.exactly('three');
+        (!!!parsed.params).should.be.true;
+        parsed.search.should.be.exactly('value');
+        parsed.query.value.should.be.exactly('');
+        (!!!parsed.hash).should.be.true;
+        parsed.href.should.be.exactly('one/two/three?value');
+    });
+    it('should parse an URL without query parameters but with a question mark', function () {
+        var parsed = urlParser.parse('one/two/three?');
+
+        (!!!parsed.protocol).should.be.true;
+        (!!!parsed.username).should.be.true;
+        (!!!parsed.password).should.be.true;
+        (!!!parsed.hostname).should.be.true;
+        (!!!parsed.host).should.be.true;
+        (!!!parsed.tld).should.be.true;
+        (!!!parsed.port).should.be.true;
+        parsed.pathname.should.be.exactly('one/two/three');
+        parsed.path[0].should.be.exactly('one');
+        parsed.path[1].should.be.exactly('two');
+        parsed.path[2].should.be.exactly('three');
+        (!!!parsed.params).should.be.true;
+        (!!!parsed.search).should.be.true;
+        (!!!parsed.query).should.be.true;
+        (!!!parsed.hash).should.be.true;
+        parsed.href.should.be.exactly('one/two/three?');
+    });
+    it('should parse an URL with a hanging ampersand query parameter', function () {
+        var parsed = urlParser.parse('one/two/three?value=123&');
+
+        (!!!parsed.protocol).should.be.true;
+        (!!!parsed.username).should.be.true;
+        (!!!parsed.password).should.be.true;
+        (!!!parsed.hostname).should.be.true;
+        (!!!parsed.host).should.be.true;
+        (!!!parsed.tld).should.be.true;
+        (!!!parsed.port).should.be.true;
+        parsed.pathname.should.be.exactly('one/two/three');
+        parsed.path[0].should.be.exactly('one');
+        parsed.path[1].should.be.exactly('two');
+        parsed.path[2].should.be.exactly('three');
+        (!!!parsed.params).should.be.true;
+        parsed.search.should.be.exactly('value=123&');
+        parsed.query.value.should.be.exactly('123');
+        (!!!parsed.hash).should.be.true;
+        parsed.href.should.be.exactly('one/two/three?value=123&');
+    });
+    it('should parse an URL without query parameters', function () {
+        var parsed = urlParser.parse('one/two/three#david-rules');
+
+        (!!!parsed.protocol).should.be.true;
+        (!!!parsed.username).should.be.true;
+        (!!!parsed.password).should.be.true;
+        (!!!parsed.hostname).should.be.true;
+        (!!!parsed.host).should.be.true;
+        (!!!parsed.tld).should.be.true;
+        (!!!parsed.port).should.be.true;
+        parsed.pathname.should.be.exactly('one/two/three');
+        parsed.path[0].should.be.exactly('one');
+        parsed.path[1].should.be.exactly('two');
+        parsed.path[2].should.be.exactly('three');
+        (!!!parsed.params).should.be.true;
+        (!!!parsed.search).should.be.true;
+        (!!!parsed.query).should.be.true;
+        parsed.hash.should.be.exactly('david-rules');
+        parsed.href.should.be.exactly('one/two/three#david-rules');
+    });
+    it('should parse an URL without a hash value', function () {
+        var parsed = urlParser.parse('one/two/three?value=abc&value=123&value2=123');
+
+        (!!!parsed.protocol).should.be.true;
+        (!!!parsed.username).should.be.true;
+        (!!!parsed.password).should.be.true;
+        (!!!parsed.hostname).should.be.true;
+        (!!!parsed.host).should.be.true;
+        (!!!parsed.tld).should.be.true;
+        (!!!parsed.port).should.be.true;
+        parsed.pathname.should.be.exactly('one/two/three');
+        parsed.path[0].should.be.exactly('one');
+        parsed.path[1].should.be.exactly('two');
+        parsed.path[2].should.be.exactly('three');
+        (!!!parsed.params).should.be.true;
+        parsed.search.should.be.exactly('value=abc&value=123&value2=123');
+        parsed.query.value[0].should.be.exactly('abc');
+        parsed.query.value[1].should.be.exactly('123');
+        parsed.query.value2.should.be.exactly('123');
+        (!!!parsed.hash).should.be.true;
+        parsed.href.should.be.exactly('one/two/three?value=abc&value=123&value2=123');
+    });
+    it('should parse an URL without query parameters or a hash value', function () {
+        var parsed = urlParser.parse('one/two/three');
+
+        (!!!parsed.protocol).should.be.true;
+        (!!!parsed.username).should.be.true;
+        (!!!parsed.password).should.be.true;
+        (!!!parsed.hostname).should.be.true;
+        (!!!parsed.host).should.be.true;
+        (!!!parsed.tld).should.be.true;
+        (!!!parsed.port).should.be.true;
+        parsed.pathname.should.be.exactly('one/two/three');
+        parsed.path[0].should.be.exactly('one');
+        parsed.path[1].should.be.exactly('two');
+        parsed.path[2].should.be.exactly('three');
+        (!!!parsed.params).should.be.true;
+        (!!!parsed.search).should.be.true;
+        (!!!parsed.query).should.be.true;
+        (!!!parsed.hash).should.be.true;
+        parsed.href.should.be.exactly('one/two/three');
+    });
+    it('shouldn\'t parse an empty string', function () {
+        var parsed = urlParser.parse('');
+
+        (!!!parsed.protocol).should.be.true;
+        (!!!parsed.username).should.be.true;
+        (!!!parsed.hostname).should.be.true;
+        (!!!parsed.host).should.be.true;
+        (!!!parsed.tld).should.be.true;
+        (!!!parsed.port).should.be.true;
+        (!!!parsed.pathname).should.be.true;
+        (!!!parsed.path).should.be.true;
+        (!!!parsed.params).should.be.true;
+        (!!!parsed.search).should.be.true;
+        (!!!parsed.query).should.be.true;
+        (!!!parsed.hash).should.be.true;
+        (!!!parsed.href).should.be.true;
+    });
+    it('shouldn\'t parse a malformed URL', function () {
+        var parsed = urlParser.parse('(╯°□°)╯︵ ┻━┻');
+
+        (!!!parsed.protocol).should.be.true;
+        (!!!parsed.username).should.be.true;
+        (!!!parsed.hostname).should.be.true;
+        (!!!parsed.host).should.be.true;
+        (!!!parsed.tld).should.be.true;
+        (!!!parsed.port).should.be.true;
+        (!!!parsed.pathname).should.be.true;
+        (!!!parsed.path).should.be.true;
+        (!!!parsed.params).should.be.true;
+        (!!!parsed.search).should.be.true;
+        (!!!parsed.query).should.be.true;
+        (!!!parsed.hash).should.be.true;
+        (!!!parsed.href).should.be.true;
+    });
 });
 
 describe('url-parser(url, template)', function () {
@@ -323,5 +521,105 @@ describe('url-parser(url, template)', function () {
         parsed.query.value2.should.be.exactly('123');
         parsed.hash.should.be.exactly('david-rules');
         parsed.href.should.be.exactly('one/two/three?value=abc&value=123&value2=123#david-rules');
+    });
+    it('should parse an URL with a blank template', function () {
+        var parsed = urlParser.parse('one/two/three?value=abc&value2=123#david-rules', '');
+
+        (!!!parsed.protocol).should.be.true;
+        (!!!parsed.username).should.be.true;
+        (!!!parsed.password).should.be.true;
+        (!!!parsed.hostname).should.be.true;
+        (!!!parsed.host).should.be.true;
+        (!!!parsed.tld).should.be.true;
+        (!!!parsed.port).should.be.true;
+        parsed.pathname.should.be.exactly('one/two/three');
+        parsed.path[0].should.be.exactly('one');
+        parsed.path[1].should.be.exactly('two');
+        parsed.path[2].should.be.exactly('three');
+        (!!!parsed.params).should.be.true;
+        parsed.search.should.be.exactly('value=abc&value2=123');
+        parsed.query.value.should.be.exactly('abc');
+        parsed.query.value2.should.be.exactly('123');
+        parsed.hash.should.be.exactly('david-rules');
+        parsed.href.should.be.exactly('one/two/three?value=abc&value2=123#david-rules');
+    });
+    it('should parse an URL with a template without a leading slash', function () {
+        var parsed = urlParser.parse('one/two/three?value=abc&value2=123#david-rules', ':value1/:value2/:value3');
+
+        (!!!parsed.protocol).should.be.true;
+        (!!!parsed.username).should.be.true;
+        (!!!parsed.password).should.be.true;
+        (!!!parsed.hostname).should.be.true;
+        (!!!parsed.host).should.be.true;
+        (!!!parsed.tld).should.be.true;
+        (!!!parsed.port).should.be.true;
+        parsed.pathname.should.be.exactly('one/two/three');
+        parsed.path[0].should.be.exactly('one');
+        parsed.path[1].should.be.exactly('two');
+        parsed.path[2].should.be.exactly('three');
+        parsed.params.value1.should.be.exactly('one');
+        parsed.params.value2.should.be.exactly('two');
+        parsed.params.value3.should.be.exactly('three');
+        parsed.search.should.be.exactly('value=abc&value2=123');
+        parsed.query.value.should.be.exactly('abc');
+        parsed.query.value2.should.be.exactly('123');
+        parsed.hash.should.be.exactly('david-rules');
+        parsed.href.should.be.exactly('one/two/three?value=abc&value2=123#david-rules');
+    });
+    it('should parse an URL with a partial template', function () {
+        var parsed = urlParser.parse('one/two/three?value=abc&value2=123#david-rules', ':value1/two/:value3');
+
+        (!!!parsed.protocol).should.be.true;
+        (!!!parsed.username).should.be.true;
+        (!!!parsed.password).should.be.true;
+        (!!!parsed.hostname).should.be.true;
+        (!!!parsed.host).should.be.true;
+        (!!!parsed.tld).should.be.true;
+        (!!!parsed.port).should.be.true;
+        parsed.pathname.should.be.exactly('one/two/three');
+        parsed.path[0].should.be.exactly('one');
+        parsed.path[1].should.be.exactly('two');
+        parsed.path[2].should.be.exactly('three');
+        parsed.params.value1.should.be.exactly('one');
+        parsed.params.value3.should.be.exactly('three');
+        parsed.search.should.be.exactly('value=abc&value2=123');
+        parsed.query.value.should.be.exactly('abc');
+        parsed.query.value2.should.be.exactly('123');
+        parsed.hash.should.be.exactly('david-rules');
+        parsed.href.should.be.exactly('one/two/three?value=abc&value2=123#david-rules');
+    });
+    it('shouldn\'t parse an empty string with a template', function () {
+        var parsed = urlParser.parse('', '/:value1');
+
+        (!!!parsed.protocol).should.be.true;
+        (!!!parsed.username).should.be.true;
+        (!!!parsed.hostname).should.be.true;
+        (!!!parsed.host).should.be.true;
+        (!!!parsed.tld).should.be.true;
+        (!!!parsed.port).should.be.true;
+        (!!!parsed.pathname).should.be.true;
+        (!!!parsed.path).should.be.true;
+        (!!!parsed.params).should.be.true;
+        (!!!parsed.search).should.be.true;
+        (!!!parsed.query).should.be.true;
+        (!!!parsed.hash).should.be.true;
+        (!!!parsed.href).should.be.true;
+    });
+    it('shouldn\'t parse a malformed URL with a template', function () {
+        var parsed = urlParser.parse('(╯°□°)╯︵ ┻━┻', '/:value1');
+
+        (!!!parsed.protocol).should.be.true;
+        (!!!parsed.username).should.be.true;
+        (!!!parsed.hostname).should.be.true;
+        (!!!parsed.host).should.be.true;
+        (!!!parsed.tld).should.be.true;
+        (!!!parsed.port).should.be.true;
+        (!!!parsed.pathname).should.be.true;
+        (!!!parsed.path).should.be.true;
+        (!!!parsed.params).should.be.true;
+        (!!!parsed.search).should.be.true;
+        (!!!parsed.query).should.be.true;
+        (!!!parsed.hash).should.be.true;
+        (!!!parsed.href).should.be.true;
     });
 });
