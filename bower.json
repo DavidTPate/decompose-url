@@ -1,12 +1,14 @@
 {
   "name": "decompose-url",
   "description": "A quick and easy URL decomposer for breaking URLs into their constituent parts.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "ignore": [
     "test",
     "benchmark",
     "**/.*",
-    "node_modules"
+    "node_modules",
+    "index.js",
+    "package.json"
   ],
   "main": "decompose-url.js",
   "homepage": "https://github.com/DavidTPate/decompose-url",
