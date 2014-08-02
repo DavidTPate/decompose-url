@@ -1,44 +1,44 @@
-# url-parser
+# decompose-url
 
-[![NPM version](https://badge.fury.io/js/url-parser.svg)](http://badge.fury.io/js/url-parser)
-[![Build Status](https://travis-ci.org/DavidTPate/url-parser.svg?branch=master)](https://travis-ci.org/DavidTPate/url-parser)
-[![Coverage Status](https://img.shields.io/coveralls/DavidTPate/url-parser.svg?branch=master)](https://coveralls.io/r/DavidTPate/url-parser)
+[![NPM version](https://badge.fury.io/js/decompose-url.svg)](http://badge.fury.io/js/decompose-url)
+[![Build Status](https://travis-ci.org/DavidTPate/decompose-url.svg?branch=master)](https://travis-ci.org/DavidTPate/decompose-url)
+[![Coverage Status](https://img.shields.io/coveralls/DavidTPate/decompose-url.svg?branch=master)](https://coveralls.io/r/DavidTPate/decompose-url)
 
-A quick and intuitive URL parser which provides a straight-forward and powerful mechanism for parsing URLs
-and mapping path parameters. Originally designed for use with Node.js, it can also be used directly in the browser.
+A quick and intuitive URL decomposer which provides a straight-forward and powerful mechanism for decomposing URLs
+into their constituent parts. Originally designed for use with Node.js, it can also be used directly in the browser.
 
 ## Install
 
 #### NPM
 ```bash
-$ npm install url-parser
+$ npm install decompose-url
 ```
 
 #### Bower
 ```bash
-bower install --save url-parser
+bower install --save decompose-url
 ```
 
 ## Node.js
 ```js
-var urlParser = require('url-parser')
+var decomposeUrl = require('decompose-url')
 
-var parsedUrl = urlParser.parse('http://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules');
-// `parsedUrl` now contains the parsed values from the url that was passed. See [Url](#url-model) for the structure.
+var decomposedUrl = decomposeUrl.decompose('http://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules');
+// `decomposedUrl` now contains the decomposed values from the url that was passed. See [Url](#url-model) for the structure.
 
-var parsedUrlWithParams = urlParser.parse('http://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules', '/:value1/:value2/:value3');
-// `parsedUrlWithParams` now contains the parsed values from the url that was passed and now parsedUrlWithParams.params is populated with a map of the path parameters that were passed and their values. See [Url](#url-model) for the structure.
+var decomposedUrlWithParams = decomposeUrl.decompose('http://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules', '/:value1/:value2/:value3');
+// `decomposedUrlWithParams` now contains the decomposed values from the url that was passed and now decomposedUrlWithParams.params is populated with a map of the path parameters that were passed and their values. See [Url](#url-model) for the structure.
 ```
 
 ## Browser
 ```js
-<script src="url-parser.js"></script>
+<script src="decompose-url.js"></script>
 <script>
-var parsedUrl = urlParser.parse('http://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules');
-// `parsedUrl` now contains the parsed values from the url that was passed. See [Url](#url-model) for the structure.
+var decomposedUrl = decomposeUrl.decompose('http://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules');
+// `decomposedUrl` now contains the decomposed values from the url that was passed. See [Url](#url-model) for the structure.
 
-var parsedUrlWithParams = urlParser.parse('http://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules', '/:value1/:value2/:value3');
-// `parsedUrlWithParams` now contains the parsed values from the url that was passed and now parsedUrlWithParams.params is populated with a map of the path parameters that were passed and their values. See [Url](#url-model) for the structure.
+var decomposedUrlWithParams = decomposeUrl.decompose('http://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules', '/:value1/:value2/:value3');
+// `decomposedUrlWithParams` now contains the decomposed values from the url that was passed and now decomposedUrlWithParams.params is populated with a map of the path parameters that were passed and their values. See [Url](#url-model) for the structure.
 </script>
 ```
 
@@ -55,7 +55,7 @@ var parsedUrlWithParams = urlParser.parse('http://test.example.com:8000/one/two/
 * `search` - The full search part in the URL, null if none. (eg. 'ui=1&pli=1')
 * `query` - A map of the query parameters in the URL, null if none. (eg. { 'ui': '1', 'pli': '1' })
 * `hash` - The full hash in the URL, null if none. (eg. 'inbox')
-* `hash` - The original URL that was parsed (eg. 'http://david:l33t5auce#!@mail.google.com/mail/u/0?ui=2&pli=1#inbox')
+* `hash` - The original URL that was decomposed (eg. 'http://david:l33t5auce#!@mail.google.com/mail/u/0?ui=2&pli=1#inbox')
 
 
 ## License

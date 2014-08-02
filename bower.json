@@ -1,14 +1,14 @@
 {
-  "name": "url-parser",
-  "description": "A quick and intuitive URL parser which provides a straight-forward and powerful mechanism for parsing URLs and mapping path parameters.",
+  "name": "decompose-url",
+  "description": "A quick and intuitive URL decomposer which provides a straight-forward and powerful mechanism for decomposing URLs into their constituent parts. Originally designed for use with Node.js, it can also be used directly in the browser.",
   "version": "0.0.1",
   "ignore": [
     "test",
     "**/.*",
     "node_modules"
   ],
-  "main": "url-parser.js",
-  "homepage": "https://github.com/DavidTPate/url-parser",
+  "main": "decompose-url.js",
+  "homepage": "https://github.com/DavidTPate/decompose-url",
   "authors": [
     "David Pate <me@davidtpate.com>"
   ],

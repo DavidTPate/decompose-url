@@ -1,7 +1,7 @@
 var Benchmark = require('benchmark'),
     mySuite = new Benchmark.Suite,
     nodeSuite = new Benchmark.Suite,
-    urlParser = require('..'),
+    decomposeUrl = require('..'),
     nodeUrl = require('url'),
     myBench,
     nodeBench;
@@ -30,7 +30,7 @@ var urls = [
 
 urls.forEach(function (url) {
     mySuite.add(url, function (url) {
-        urlParser.parse(url);
+        decomposeUrl.decompose(url);
     });
     nodeSuite.add(url, function (url) {
         nodeUrl.parse(url);

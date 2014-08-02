@@ -24,8 +24,8 @@ function Url() {
     this.href = null;
 }
 
-module.exports.parse = function (url, template) {
-    var parsedUrl = parse(url);
+module.exports.decompose = function (url, template) {
+    var parsedUrl = decompose(url);
 
     if (template) {
         return parseTemplate(parsedUrl, template);
@@ -33,7 +33,7 @@ module.exports.parse = function (url, template) {
     return parsedUrl;
 };
 
-function parse(str) {
+function decompose(str) {
     var url = new Url();
     if (!str || typeof str !== 'string') {
         return url;
