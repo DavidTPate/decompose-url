@@ -3,7 +3,7 @@ var decomposeUrl = require('..'),
 
 describe('decompose-url(url)', function () {
     it('should parse an absolute URL', function () {
-        var parsed = decomposeUrl.decompose('http://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules');
+        var parsed = decomposeUrl('http://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules');
 
         parsed.protocol.should.be.exactly('http');
         (!!!parsed.username).should.be.true;
@@ -25,7 +25,7 @@ describe('decompose-url(url)', function () {
         parsed.href.should.be.exactly('http://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules');
     });
     it('should parse an absolute URL with authentication', function () {
-        var parsed = decomposeUrl.decompose('http://username:password@test.example.com:8000/one/two/three?value=abc&value2=123#david-rules');
+        var parsed = decomposeUrl('http://username:password@test.example.com:8000/one/two/three?value=abc&value2=123#david-rules');
 
         parsed.protocol.should.be.exactly('http');
         parsed.username.should.be.exactly('username');
@@ -47,7 +47,7 @@ describe('decompose-url(url)', function () {
         parsed.href.should.be.exactly('http://username:password@test.example.com:8000/one/two/three?value=abc&value2=123#david-rules');
     });
     it('should parse a protocol relative URL', function () {
-        var parsed = decomposeUrl.decompose('//test.example.com/one/two/three?value=abc&value2=123#david-rules');
+        var parsed = decomposeUrl('//test.example.com/one/two/three?value=abc&value2=123#david-rules');
 
         (!!!parsed.protocol).should.be.true;
         (!!!parsed.username).should.be.true;
@@ -69,7 +69,7 @@ describe('decompose-url(url)', function () {
         parsed.href.should.be.exactly('//test.example.com/one/two/three?value=abc&value2=123#david-rules');
     });
     it('should parse a protocol relative URL with authentication', function () {
-        var parsed = decomposeUrl.decompose('//username:password@test.example.com/one/two/three?value=abc&value2=123#david-rules');
+        var parsed = decomposeUrl('//username:password@test.example.com/one/two/three?value=abc&value2=123#david-rules');
 
         (!!!parsed.protocol).should.be.true;
         parsed.username.should.be.exactly('username');
@@ -91,7 +91,7 @@ describe('decompose-url(url)', function () {
         parsed.href.should.be.exactly('//username:password@test.example.com/one/two/three?value=abc&value2=123#david-rules');
     });
     it('should parse a root relative URL', function () {
-        var parsed = decomposeUrl.decompose('/one/two/three?value=abc&value2=123#david-rules');
+        var parsed = decomposeUrl('/one/two/three?value=abc&value2=123#david-rules');
 
         (!!!parsed.protocol).should.be.true;
         (!!!parsed.username).should.be.true;
@@ -112,7 +112,7 @@ describe('decompose-url(url)', function () {
         parsed.href.should.be.exactly('/one/two/three?value=abc&value2=123#david-rules');
     });
     it('should parse a document relative URL', function () {
-        var parsed = decomposeUrl.decompose('one/two/three?value=abc&value2=123#david-rules');
+        var parsed = decomposeUrl('one/two/three?value=abc&value2=123#david-rules');
 
         (!!!parsed.protocol).should.be.true;
         (!!!parsed.username).should.be.true;
@@ -133,7 +133,7 @@ describe('decompose-url(url)', function () {
         parsed.href.should.be.exactly('one/two/three?value=abc&value2=123#david-rules');
     });
     it('should parse a document relative URL with duplicate query parameters', function () {
-        var parsed = decomposeUrl.decompose('one/two/three?value=abc&value=123&value2=123#david-rules');
+        var parsed = decomposeUrl('one/two/three?value=abc&value=123&value2=123#david-rules');
 
         (!!!parsed.protocol).should.be.true;
         (!!!parsed.username).should.be.true;
@@ -155,7 +155,7 @@ describe('decompose-url(url)', function () {
         parsed.href.should.be.exactly('one/two/three?value=abc&value=123&value2=123#david-rules');
     });
     it('should parse a document relative URL with triplicate query parameters', function () {
-        var parsed = decomposeUrl.decompose('one/two/three?value=abc&value=123&value=123');
+        var parsed = decomposeUrl('one/two/three?value=abc&value=123&value=123');
 
         (!!!parsed.protocol).should.be.true;
         (!!!parsed.username).should.be.true;
@@ -177,7 +177,7 @@ describe('decompose-url(url)', function () {
         parsed.href.should.be.exactly('one/two/three?value=abc&value=123&value=123');
     });
     it('should parse an URL with an empty query parameter value', function () {
-        var parsed = decomposeUrl.decompose('one/two/three?value=');
+        var parsed = decomposeUrl('one/two/three?value=');
 
         (!!!parsed.protocol).should.be.true;
         (!!!parsed.username).should.be.true;
@@ -197,7 +197,7 @@ describe('decompose-url(url)', function () {
         parsed.href.should.be.exactly('one/two/three?value=');
     });
     it('should parse an URL with an empty query parameter missing an equals', function () {
-        var parsed = decomposeUrl.decompose('one/two/three?value');
+        var parsed = decomposeUrl('one/two/three?value');
 
         (!!!parsed.protocol).should.be.true;
         (!!!parsed.username).should.be.true;
@@ -217,7 +217,7 @@ describe('decompose-url(url)', function () {
         parsed.href.should.be.exactly('one/two/three?value');
     });
     it('should parse an URL without query parameters but with a question mark', function () {
-        var parsed = decomposeUrl.decompose('one/two/three?');
+        var parsed = decomposeUrl('one/two/three?');
 
         (!!!parsed.protocol).should.be.true;
         (!!!parsed.username).should.be.true;
@@ -237,7 +237,7 @@ describe('decompose-url(url)', function () {
         parsed.href.should.be.exactly('one/two/three?');
     });
     it('should parse an URL with a hanging ampersand query parameter', function () {
-        var parsed = decomposeUrl.decompose('one/two/three?value=123&');
+        var parsed = decomposeUrl('one/two/three?value=123&');
 
         (!!!parsed.protocol).should.be.true;
         (!!!parsed.username).should.be.true;
@@ -257,7 +257,7 @@ describe('decompose-url(url)', function () {
         parsed.href.should.be.exactly('one/two/three?value=123&');
     });
     it('should parse an URL without query parameters', function () {
-        var parsed = decomposeUrl.decompose('one/two/three#david-rules');
+        var parsed = decomposeUrl('one/two/three#david-rules');
 
         (!!!parsed.protocol).should.be.true;
         (!!!parsed.username).should.be.true;
@@ -277,7 +277,7 @@ describe('decompose-url(url)', function () {
         parsed.href.should.be.exactly('one/two/three#david-rules');
     });
     it('should parse an URL without a hash value', function () {
-        var parsed = decomposeUrl.decompose('one/two/three?value=abc&value=123&value2=123');
+        var parsed = decomposeUrl('one/two/three?value=abc&value=123&value2=123');
 
         (!!!parsed.protocol).should.be.true;
         (!!!parsed.username).should.be.true;
@@ -299,7 +299,7 @@ describe('decompose-url(url)', function () {
         parsed.href.should.be.exactly('one/two/three?value=abc&value=123&value2=123');
     });
     it('should parse an URL without query parameters or a hash value', function () {
-        var parsed = decomposeUrl.decompose('one/two/three');
+        var parsed = decomposeUrl('one/two/three');
 
         (!!!parsed.protocol).should.be.true;
         (!!!parsed.username).should.be.true;
@@ -319,7 +319,7 @@ describe('decompose-url(url)', function () {
         parsed.href.should.be.exactly('one/two/three');
     });
     it('shouldn\'t parse an empty string', function () {
-        var parsed = decomposeUrl.decompose('');
+        var parsed = decomposeUrl('');
 
         (!!!parsed.protocol).should.be.true;
         (!!!parsed.username).should.be.true;
@@ -336,7 +336,7 @@ describe('decompose-url(url)', function () {
         (!!!parsed.href).should.be.true;
     });
     it('shouldn\'t parse a malformed URL', function () {
-        var parsed = decomposeUrl.decompose('(╯°□°)╯︵ ┻━┻');
+        var parsed = decomposeUrl('(╯°□°)╯︵ ┻━┻');
 
         (!!!parsed.protocol).should.be.true;
         (!!!parsed.username).should.be.true;
@@ -356,7 +356,7 @@ describe('decompose-url(url)', function () {
 
 describe('decompose-url(url, template)', function () {
     it('should parse an absolute URL with a template', function () {
-        var parsed = decomposeUrl.decompose('http://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules', '/:value1/:value2/:value3');
+        var parsed = decomposeUrl('http://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules', '/:value1/:value2/:value3');
 
         parsed.protocol.should.be.exactly('http');
         (!!!parsed.username).should.be.true;
@@ -382,7 +382,7 @@ describe('decompose-url(url, template)', function () {
         parsed.param
     });
     it('should parse an absolute URL with authentication with a template', function () {
-        var parsed = decomposeUrl.decompose('http://username:password@test.example.com:8000/one/two/three?value=abc&value2=123#david-rules', '/:value1/:value2/:value3');
+        var parsed = decomposeUrl('http://username:password@test.example.com:8000/one/two/three?value=abc&value2=123#david-rules', '/:value1/:value2/:value3');
 
         parsed.protocol.should.be.exactly('http');
         parsed.username.should.be.exactly('username');
@@ -406,7 +406,7 @@ describe('decompose-url(url, template)', function () {
         parsed.href.should.be.exactly('http://username:password@test.example.com:8000/one/two/three?value=abc&value2=123#david-rules');
     });
     it('should parse a protocol relative URL with a template', function () {
-        var parsed = decomposeUrl.decompose('//test.example.com/one/two/three?value=abc&value2=123#david-rules', '/:value1/:value2/:value3');
+        var parsed = decomposeUrl('//test.example.com/one/two/three?value=abc&value2=123#david-rules', '/:value1/:value2/:value3');
 
         (!!!parsed.protocol).should.be.true;
         (!!!parsed.username).should.be.true;
@@ -430,7 +430,7 @@ describe('decompose-url(url, template)', function () {
         parsed.href.should.be.exactly('//test.example.com/one/two/three?value=abc&value2=123#david-rules');
     });
     it('should parse a protocol relative URL with authentication with a template', function () {
-        var parsed = decomposeUrl.decompose('//username:password@test.example.com/one/two/three?value=abc&value2=123#david-rules', '/:value1/:value2/:value3');
+        var parsed = decomposeUrl('//username:password@test.example.com/one/two/three?value=abc&value2=123#david-rules', '/:value1/:value2/:value3');
 
         (!!!parsed.protocol).should.be.true;
         parsed.username.should.be.exactly('username');
@@ -454,7 +454,7 @@ describe('decompose-url(url, template)', function () {
         parsed.href.should.be.exactly('//username:password@test.example.com/one/two/three?value=abc&value2=123#david-rules');
     });
     it('should parse a root relative URL with a template', function () {
-        var parsed = decomposeUrl.decompose('/one/two/three?value=abc&value2=123#david-rules', '/:value1/:value2/:value3');
+        var parsed = decomposeUrl('/one/two/three?value=abc&value2=123#david-rules', '/:value1/:value2/:value3');
 
         (!!!parsed.protocol).should.be.true;
         (!!!parsed.username).should.be.true;
@@ -477,7 +477,7 @@ describe('decompose-url(url, template)', function () {
         parsed.href.should.be.exactly('/one/two/three?value=abc&value2=123#david-rules');
     });
     it('should parse a document relative URL with a template', function () {
-        var parsed = decomposeUrl.decompose('one/two/three?value=abc&value2=123#david-rules', '/:value1/:value2/:value3');
+        var parsed = decomposeUrl('one/two/three?value=abc&value2=123#david-rules', '/:value1/:value2/:value3');
 
         (!!!parsed.protocol).should.be.true;
         (!!!parsed.username).should.be.true;
@@ -500,7 +500,7 @@ describe('decompose-url(url, template)', function () {
         parsed.href.should.be.exactly('one/two/three?value=abc&value2=123#david-rules');
     });
     it('should parse a document relative URL with duplicate query parameters and a partial template', function () {
-        var parsed = decomposeUrl.decompose('one/two/three?value=abc&value=123&value2=123#david-rules', '/:value1/:value2');
+        var parsed = decomposeUrl('one/two/three?value=abc&value=123&value2=123#david-rules', '/:value1/:value2');
 
         (!!!parsed.protocol).should.be.true;
         (!!!parsed.username).should.be.true;
@@ -523,7 +523,7 @@ describe('decompose-url(url, template)', function () {
         parsed.href.should.be.exactly('one/two/three?value=abc&value=123&value2=123#david-rules');
     });
     it('should parse an URL with a blank template', function () {
-        var parsed = decomposeUrl.decompose('one/two/three?value=abc&value2=123#david-rules', '');
+        var parsed = decomposeUrl('one/two/three?value=abc&value2=123#david-rules', '');
 
         (!!!parsed.protocol).should.be.true;
         (!!!parsed.username).should.be.true;
@@ -544,7 +544,7 @@ describe('decompose-url(url, template)', function () {
         parsed.href.should.be.exactly('one/two/three?value=abc&value2=123#david-rules');
     });
     it('should parse an URL with a template without a leading slash', function () {
-        var parsed = decomposeUrl.decompose('one/two/three?value=abc&value2=123#david-rules', ':value1/:value2/:value3');
+        var parsed = decomposeUrl('one/two/three?value=abc&value2=123#david-rules', ':value1/:value2/:value3');
 
         (!!!parsed.protocol).should.be.true;
         (!!!parsed.username).should.be.true;
@@ -567,7 +567,7 @@ describe('decompose-url(url, template)', function () {
         parsed.href.should.be.exactly('one/two/three?value=abc&value2=123#david-rules');
     });
     it('should parse an URL with a partial template', function () {
-        var parsed = decomposeUrl.decompose('one/two/three?value=abc&value2=123#david-rules', ':value1/two/:value3');
+        var parsed = decomposeUrl('one/two/three?value=abc&value2=123#david-rules', ':value1/two/:value3');
 
         (!!!parsed.protocol).should.be.true;
         (!!!parsed.username).should.be.true;
@@ -589,7 +589,7 @@ describe('decompose-url(url, template)', function () {
         parsed.href.should.be.exactly('one/two/three?value=abc&value2=123#david-rules');
     });
     it('shouldn\'t parse an empty string with a template', function () {
-        var parsed = decomposeUrl.decompose('', '/:value1');
+        var parsed = decomposeUrl('', '/:value1');
 
         (!!!parsed.protocol).should.be.true;
         (!!!parsed.username).should.be.true;
@@ -606,7 +606,7 @@ describe('decompose-url(url, template)', function () {
         (!!!parsed.href).should.be.true;
     });
     it('shouldn\'t parse a malformed URL with a template', function () {
-        var parsed = decomposeUrl.decompose('(╯°□°)╯︵ ┻━┻', '/:value1');
+        var parsed = decomposeUrl('(╯°□°)╯︵ ┻━┻', '/:value1');
 
         (!!!parsed.protocol).should.be.true;
         (!!!parsed.username).should.be.true;
