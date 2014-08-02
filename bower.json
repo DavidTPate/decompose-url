@@ -1,7 +1,7 @@
 {
   "name": "decompose-url",
-  "description": "A quick and intuitive URL decomposer which provides a straight-forward and powerful mechanism for decomposing URLs into their constituent parts. Originally designed for use with Node.js, it can also be used directly in the browser.",
-  "version": "0.0.1",
+  "description": "A quick and easy URL decomposer for breaking URLs into their constituent parts.",
+  "version": "0.1.0",
   "ignore": [
     "test",
     "benchmark",

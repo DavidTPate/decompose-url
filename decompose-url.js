@@ -25,7 +25,7 @@ function Url() {
     this.href = null;
 }
 
-module.exports.decompose = function (url, template) {
+module.exports = function (url, template) {
     var parsedUrl = decompose(url);
 
     if (template) {

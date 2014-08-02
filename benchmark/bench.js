@@ -30,7 +30,7 @@ var urls = [
 
 urls.forEach(function (url) {
     mySuite.add(url, function (url) {
-        decomposeUrl.decompose(url);
+        decomposeUrl(url);
     });
     nodeSuite.add(url, function (url) {
         nodeUrl.parse(url);

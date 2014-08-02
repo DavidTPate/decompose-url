@@ -5,8 +5,7 @@
 [![Build Status](https://travis-ci.org/DavidTPate/decompose-url.svg?branch=master)](https://travis-ci.org/DavidTPate/decompose-url)
 [![Coverage Status](https://img.shields.io/coveralls/DavidTPate/decompose-url.svg?branch=master)](https://coveralls.io/r/DavidTPate/decompose-url)
 
-A quick and intuitive URL decomposer which provides a straight-forward and powerful mechanism for decomposing URLs
-into their constituent parts. Originally designed for use with Node.js, it can also be used directly in the browser.
+A quick and easy URL decomposer for breaking URLs into their constituent parts.
 
 ## Install
 
@@ -24,10 +23,10 @@ bower install --save decompose-url
 ```js
 var decomposeUrl = require('decompose-url')
 
-var decomposedUrl = decomposeUrl.decompose('http://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules');
+var decomposedUrl = decomposeUrl('http://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules');
 // `decomposedUrl` now contains the decomposed values from the url that was passed. See [Url](#url-model) for the structure.
 
-var decomposedUrlWithParams = decomposeUrl.decompose('http://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules', '/:value1/:value2/:value3');
+var decomposedUrlWithParams = decomposeUrl('http://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules', '/:value1/:value2/:value3');
 // `decomposedUrlWithParams` now contains the decomposed values from the url that was passed and now decomposedUrlWithParams.params is populated with a map of the path parameters that were passed and their values. See [Url](#url-model) for the structure.
 ```
 
@@ -35,10 +34,10 @@ var decomposedUrlWithParams = decomposeUrl.decompose('http://test.example.com:80
 ```js
 <script type="text/javascript" src="decompose-url.js"></script>
 <script type="text/javascript">
-var decomposedUrl = decomposeUrl.decompose('http://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules');
+var decomposedUrl = decomposeUrl('http://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules');
 // `decomposedUrl` now contains the decomposed values from the url that was passed. See [Url](#url-model) for the structure.
 
-var decomposedUrlWithParams = decomposeUrl.decompose('http://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules', '/:value1/:value2/:value3');
+var decomposedUrlWithParams = decomposeUrl('http://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules', '/:value1/:value2/:value3');
 // `decomposedUrlWithParams` now contains the decomposed values from the url that was passed and now decomposedUrlWithParams.params is populated with a map of the path parameters that were passed and their values. See [Url](#url-model) for the structure.
 </script>
 ```
