@@ -61,21 +61,19 @@ function parse(str) {
             }
 
             var host = hostPattern.exec(parsed);
-            if (host) {
-                url.hostname = host[0];
-                url.host = host[0].split('.');
-                // Remove the TLD
-                url.tld = url.host[url.host.length - 1];
-                url.host.splice(url.host.length - 1);
-                parsed = parsed.substr(host[0].length);
+            url.hostname = host[0];
+            url.host = host[0].split('.');
+            // Remove the TLD
+            url.tld = url.host[url.host.length - 1];
+            url.host.splice(url.host.length - 1);
+            parsed = parsed.substr(host[0].length);
 
-                var port = portPattern.exec(parsed);
-                if (port) {
-                    url.port = port[1];
-                    parsed = parsed.substr(port[0].length);
-                } else {
-                    url.port = '80';
-                }
+            var port = portPattern.exec(parsed);
+            if (port) {
+                url.port = port[1];
+                parsed = parsed.substr(port[0].length);
+            } else {
+                url.port = '80';
             }
         }
 
@@ -97,13 +95,12 @@ function parse(str) {
 }
 
 function parseQueryString(str) {
-    var obj = {};
-
     if (!str || typeof str !== 'string') {
-        return obj;
+        return null;
     }
 
     var spacesRegExp = /\+/g,
+        obj = {},
         qs = str.split(separator),
         len = qs.length,
         pair,
