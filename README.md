@@ -15,19 +15,11 @@ $ npm install url-parser
 ```
 
 #### Bower
-```yaml
-{
-  "dependencies": {
-    "url-parser": "latest"
-  }
-}
+```bash
+bower install --save url-parser
 ```
 
-```js
-<script type="text/javascript" src="url-parser/index.js"></script>
-```
-
-## Quick Examples
+## Node.js
 ```js
 var urlParser = require('url-parser')
 
@@ -35,7 +27,19 @@ var parsedUrl = urlParser.parse('http://test.example.com:8000/one/two/three?valu
 // `parsedUrl` now contains the parsed values from the url that was passed. See [Url](#url-model) for the structure.
 
 var parsedUrlWithParams = urlParser.parse('http://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules', '/:value1/:value2/:value3');
-// `parsedUrl` now contains the parsed values from the url that was passed and now parsedUrlWithParams.params is populated with a map of the path parameters that were passed and their values. See [Url](#url-model) for the structure.
+// `parsedUrlWithParams` now contains the parsed values from the url that was passed and now parsedUrlWithParams.params is populated with a map of the path parameters that were passed and their values. See [Url](#url-model) for the structure.
+```
+
+## Browser
+```js
+<script src="url-parser.js"></script>
+<script>
+var parsedUrl = urlParser.parse('http://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules');
+// `parsedUrl` now contains the parsed values from the url that was passed. See [Url](#url-model) for the structure.
+
+var parsedUrlWithParams = urlParser.parse('http://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules', '/:value1/:value2/:value3');
+// `parsedUrlWithParams` now contains the parsed values from the url that was passed and now parsedUrlWithParams.params is populated with a map of the path parameters that were passed and their values. See [Url](#url-model) for the structure.
+</script>
 ```
 
 ## Url Model
