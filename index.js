@@ -1,6 +1,6 @@
 var simplePathRegExp = /^(\/?\/?(?!\/)[^\?#\s]*)(\?[^#\s]*)?(#[^\s]*)?$/,
     protocolPattern = /^([a-z0-9.+-]+:)?(\/\/(?!\/))/i,
-    hostPattern = /^[a-z0-9_\-\.]{0,63}\.[a-z]+(?=:|\/)/i,
+    hostPattern = /^[a-z0-9_\-\.]{0,63}\.[a-z]+|localhost(?=:|\/)/i,
     authPattern = /^([a-z0-9_\-]+):([a-z0-9_\-]+)@/i,
     portPattern = /^:([0-9]*)/,
     separator = '&',
@@ -62,9 +62,11 @@ function decompose(str) {
             var host = hostPattern.exec(parsed);
             url.hostname = host[0];
             url.host = host[0].split('.');
-            // Remove the TLD
-            url.tld = url.host[url.host.length - 1];
-            url.host.splice(url.host.length - 1);
+            // Remove the TLD, if there is one
+            if (url.host.length > 1) {
+                url.tld = url.host[url.host.length - 1];
+                url.host.splice(url.host.length - 1);
+            }
             parsed = parsed.substr(host[0].length);
 
             var port = portPattern.exec(parsed);
