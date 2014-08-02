@@ -32,8 +32,8 @@ var decomposedUrlWithParams = decomposeUrl.decompose('http://test.example.com:80
 
 ## Browser
 ```js
-<script src="decompose-url.js"></script>
-<script>
+<script type="text/javascript" src="decompose-url.js"></script>
+<script type="text/javascript">
 var decomposedUrl = decomposeUrl.decompose('http://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules');
 // `decomposedUrl` now contains the decomposed values from the url that was passed. See [Url](#url-model) for the structure.
 
