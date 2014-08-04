@@ -396,8 +396,8 @@ describe('decompose-url(url)', function () {
         (!!!parsed.hash).should.be.true;
         (!!!parsed.href).should.be.true;
     });
-    it.only('shouldn\'t parse an undefined URL', function () {
-        var parsed = decomposeUrl.decompose(undefined);
+    it('shouldn\'t parse an undefined URL', function () {
+        var parsed = decomposeUrl(undefined);
 
         (!!!parsed.protocol).should.be.true;
         (!!!parsed.username).should.be.true;
