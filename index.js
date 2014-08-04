@@ -10,9 +10,7 @@ var slash = 0x2F,
     octothorpe = 0x23,
     ampersand = 0x26,
     colon = 0x3A,
-    equals = 0x3D,
-    equalsSymbol = '=',
-    querySeparator = '&';
+    equals = 0x3D;
 
 function Url() {
     this.protocol = null;
@@ -136,40 +134,51 @@ function decomposePath(url, str) {
 }
 
 function parseQueryString(str) {
-    //TODO: Improve speed of query string processing. This is making the difference between 1.3 million ops/sec and 237k ops/sec.
-    if (typeof str !== 'string') {
+    if (!str || typeof str !== 'string') {
         return null;
     }
 
-    if (str.charCodeAt(0) === question) {
-        str = str.substring(1, str.length);
-    }
-
-    if (!str) {
-        return null;
-    }
-
-    var spacesRegExp = /\+/g,
+    var charCode,
         obj = {},
-        qs = str.split(querySeparator),
-        len = qs.length,
-        pair,
-        equalsIndex,
-        key,
-        value;
+        key = '',
+        value ='',
+        inKey = false;
+    for (var i = 0; i < str.length; i++) {
+        charCode = str.charCodeAt(i);
 
-    for (var i = 0; i < len; i++) {
-        pair = qs[i].replace(spacesRegExp, '%20');
-        equalsIndex = pair.indexOf(equalsSymbol);
+        switch (charCode) {
+            case question:
+                inKey = true;
+                break;
+            case equals:
+                inKey = false;
+                break;
+            case ampersand:
+                key = decodeURIComponent(key);
+                value = decodeURIComponent(value);
 
-        if (equalsIndex >= 0) {
-            key = pair.substr(0, equalsIndex);
-            value = pair.substr(equalsIndex + 1);
-        } else {
-            key = pair;
-            value = '';
+                if (!obj.hasOwnProperty(key)) {
+                    obj[key] = value;
+                } else if (Array.isArray(obj[key])) {
+                    obj[key].push(value);
+                } else {
+                    obj[key] = [obj[key], value];
+                }
+                key = '';
+                value = '';
+                inKey = true;
+                break;
+            default:
+                if (inKey) {
+                    key += str.charAt(i);
+                } else {
+                    value += str.charAt(i);
+                }
+                break;
         }
+    }
 
+    if (key) {
         key = decodeURIComponent(key);
         value = decodeURIComponent(value);
 
@@ -181,7 +190,6 @@ function parseQueryString(str) {
             obj[key] = [obj[key], value];
         }
     }
-
     return obj;
 }
 

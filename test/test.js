@@ -276,7 +276,7 @@ describe('decompose-url(url)', function () {
         parsed.path[2].should.be.exactly('three');
         (!!!parsed.params).should.be.true;
         parsed.search.should.be.exactly('?');
-        (!!!parsed.query).should.be.true;
+        JSON.stringify(parsed.query).should.be.exactly('{}');
         (!!!parsed.hash).should.be.true;
         parsed.href.should.be.exactly('one/two/three?');
     });
