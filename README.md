@@ -60,79 +60,79 @@ var decomposedUrlWithParams = decomposeUrl('http://test.example.com:8000/one/two
 ## Benchmark
 ```bash
 $ npm run-script bench
-
-> decompose-url@0.1.1 bench url-parser
-> node benchmark/index.js
-
-> node benchmark\absolute-url.js
-
-  Parsing URL http://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules
-
-  1 test completed.
-  2 tests completed.
-  3 tests completed.
-  4 tests completed.
-
-  decomposeUrl  x   186,123 ops/sec ±0.18% (196 runs sampled)
-  nativeUrl     x    50,832 ops/sec ±0.18% (193 runs sampled)
-  parseUrl      x    50,001 ops/sec ±0.22% (195 runs sampled)
-  fastUrlParser x 1,326,936 ops/sec ±0.14% (197 runs sampled)
-
-> node benchmark\document-relative-url.js
-
-  Parsing URL one/two/three?value=abc&value2=123#david-rules
-
-  1 test completed.
-  2 tests completed.
-  3 tests completed.
-  4 tests completed.
-
-  decomposeUrl  x   252,823 ops/sec ±0.16% (196 runs sampled)
-  nativeUrl     x    97,242 ops/sec ±0.27% (192 runs sampled)
-  parseUrl      x    93,634 ops/sec ±0.20% (197 runs sampled)
-  fastUrlParser x 2,223,832 ops/sec ±0.17% (197 runs sampled)
-
-> node benchmark\full-url.js
-
-  Parsing URL http://username:password@test.example.com:8000/one/two/three?value=abc&value2=123#david-rules
-
-  1 test completed.
-  2 tests completed.
-  3 tests completed.
-  4 tests completed.
-
-  decomposeUrl  x   181,265 ops/sec ±0.15% (196 runs sampled)
-  nativeUrl     x    43,508 ops/sec ±0.24% (196 runs sampled)
-  parseUrl      x    42,568 ops/sec ±0.25% (196 runs sampled)
-  fastUrlParser x 1,149,610 ops/sec ±0.19% (197 runs sampled)
-
-> node benchmark\protocol-relative-url.js
-
-  Parsing URL //test.example.com/one/two/three?value=abc&value2=123#david-rules
-
-  1 test completed.
-  2 tests completed.
-  3 tests completed.
-  4 tests completed.
-
-  decomposeUrl  x   194,544 ops/sec ±0.15% (195 runs sampled)
-  nativeUrl     x    97,379 ops/sec ±0.19% (194 runs sampled)
-  parseUrl      x    91,473 ops/sec ±0.15% (196 runs sampled)
-  fastUrlParser x 1,753,292 ops/sec ±0.23% (197 runs sampled)
-
-> node benchmark\root-relative-url.js
-
-  Parsing URL /one/two/three?value=abc&value2=123#david-rules
-
-  1 test completed.
-  2 tests completed.
-  3 tests completed.
-  4 tests completed.
-
-  decomposeUrl  x   243,234 ops/sec ±0.16% (197 runs sampled)
-  nativeUrl     x    93,427 ops/sec ±0.21% (194 runs sampled)
-  parseUrl      x    87,469 ops/sec ±0.16% (197 runs sampled)
-  fastUrlParser x 2,278,611 ops/sec ±0.18% (197 runs sampled)
+  
+  > decompose-url@0.1.1 bench decompose-url
+  > node benchmark/index.js
+  
+  > node benchmark\absolute-url.js
+  
+    Parsing URL http://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules
+  
+    1 test completed.
+    2 tests completed.
+    3 tests completed.
+    4 tests completed.
+  
+    decomposeUrl  x 163,512 ops/sec ±1.56% (190 runs sampled)
+    nativeUrl     x  30,360 ops/sec ±8.72% (178 runs sampled)
+    parseUrl      x  47,596 ops/sec ±0.39% (194 runs sampled)
+    fastUrlParser x 202,588 ops/sec ±0.50% (194 runs sampled)
+  
+  > node benchmark\document-relative-url.js
+  
+    Parsing URL one/two/three?value=abc&value2=123#david-rules
+  
+    1 test completed.
+    2 tests completed.
+    3 tests completed.
+    4 tests completed.
+  
+    decomposeUrl  x 249,480 ops/sec ±0.83% (192 runs sampled)
+    nativeUrl     x  48,733 ops/sec ±0.62% (192 runs sampled)
+    parseUrl      x  85,748 ops/sec ±0.38% (194 runs sampled)
+    fastUrlParser x 228,947 ops/sec ±0.32% (194 runs sampled)
+  
+  > node benchmark\full-url.js
+  
+    Parsing URL http://username:password@test.example.com:8000/one/two/three?value=abc&value2=123#david-rules
+  
+    1 test completed.
+    2 tests completed.
+    3 tests completed.
+    4 tests completed.
+  
+    decomposeUrl  x 175,174 ops/sec ±0.39% (195 runs sampled)
+    nativeUrl     x  30,124 ops/sec ±0.51% (195 runs sampled)
+    parseUrl      x  42,524 ops/sec ±0.47% (194 runs sampled)
+    fastUrlParser x 193,825 ops/sec ±0.43% (194 runs sampled)
+  
+  > node benchmark\protocol-relative-url.js
+  
+    Parsing URL //test.example.com/one/two/three?value=abc&value2=123#david-rules
+  
+    1 test completed.
+    2 tests completed.
+    3 tests completed.
+    4 tests completed.
+  
+    decomposeUrl  x 192,173 ops/sec ±0.61% (194 runs sampled)
+    nativeUrl     x  52,572 ops/sec ±0.63% (193 runs sampled)
+    parseUrl      x  87,603 ops/sec ±0.47% (193 runs sampled)
+    fastUrlParser x 227,794 ops/sec ±0.38% (193 runs sampled)
+  
+  > node benchmark\root-relative-url.js
+  
+    Parsing URL /one/two/three?value=abc&value2=123#david-rules
+  
+    1 test completed.
+    2 tests completed.
+    3 tests completed.
+    4 tests completed.
+  
+    decomposeUrl  x 248,309 ops/sec ±1.34% (188 runs sampled)
+    nativeUrl     x  48,174 ops/sec ±1.71% (184 runs sampled)
+    parseUrl      x  74,095 ops/sec ±2.57% (183 runs sampled)
+    fastUrlParser x 226,776 ops/sec ±1.34% (191 runs sampled)
 ```
 
 ## License
