@@ -1,16 +1,11 @@
 var simplePathRegExp = /^(\/?\/?(?!\/)[^\?#\s]*)(\?[^#\s]*)?(#[^\s]*)?$/,
-    protocolPattern = /^(([a-z0-9.+-]+):)?\/\/(?!\/)(.*)/i,
-    hostPattern = /^[a-z0-9_\-\.]{0,63}\.[a-z]+|localhost(?=:|\/)/i,
-    authPattern = /^([a-z0-9_\-]+):([a-z0-9_\-]+)@/i,
-    portPattern = /^:([0-9]*)/,
-    giantPattern = /^(([a-z0-9.+-]+):)?\/\/(?!\/)((.+):(.+)@)?([a-z0-9_\-\.]{0,63}\.[a-z]+|localhost(?=:|\/))?(:([0-9]*))?(.*)/i;
+    giantPattern = /^(([a-z0-9.+-]+):)?\/\/(?!\/)((.+):(.+)@)?([a-z0-9_\-\.]{0,63}\.[a-z]+|localhost(?=:|\/))?(:([0-9]*))?(.*)/i,
+    queryStringPattern = /\??([^\?\=\&]+)\=?([^\=\&]+)?/g;
 
 var slash = 0x2F,
     question = 0x3F,
     octothorpe = 0x23,
-    ampersand = 0x26,
-    colon = 0x3A,
-    equals = 0x3D;
+    colon = 0x3A;
 
 function Url() {
     this.protocol = null;
@@ -138,49 +133,14 @@ function parseQueryString(str) {
         return null;
     }
 
-    var charCode,
-        obj = {},
-        key = '',
-        value ='',
-        inKey = false;
-    for (var i = 0; i < str.length; i++) {
-        charCode = str.charCodeAt(i);
+    var obj = {};
 
-        switch (charCode) {
-            case question:
-                inKey = true;
-                break;
-            case equals:
-                inKey = false;
-                break;
-            case ampersand:
-                key = decodeURIComponent(key);
-                value = decodeURIComponent(value);
-
-                if (!obj.hasOwnProperty(key)) {
-                    obj[key] = value;
-                } else if (Array.isArray(obj[key])) {
-                    obj[key].push(value);
-                } else {
-                    obj[key] = [obj[key], value];
-                }
-                key = '';
-                value = '';
-                inKey = true;
-                break;
-            default:
-                if (inKey) {
-                    key += str.charAt(i);
-                } else {
-                    value += str.charAt(i);
-                }
-                break;
-        }
-    }
-
-    if (key) {
-        key = decodeURIComponent(key);
-        value = decodeURIComponent(value);
+    var matches = queryStringPattern.exec(str),
+        key,
+        value;
+    while (matches && queryStringPattern.lastIndex) {
+        key = decodeURIComponent(matches[1]);
+        value = decodeURIComponent(matches[2] || '');
 
         if (!obj.hasOwnProperty(key)) {
             obj[key] = value;
@@ -189,6 +149,8 @@ function parseQueryString(str) {
         } else {
             obj[key] = [obj[key], value];
         }
+
+        matches = queryStringPattern.exec(str);
     }
     return obj;
 }
