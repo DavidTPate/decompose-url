@@ -396,6 +396,23 @@ describe('decompose-url(url)', function () {
         (!!!parsed.hash).should.be.true;
         (!!!parsed.href).should.be.true;
     });
+    it.only('shouldn\'t parse an undefined URL', function () {
+        var parsed = decomposeUrl.decompose(undefined);
+
+        (!!!parsed.protocol).should.be.true;
+        (!!!parsed.username).should.be.true;
+        (!!!parsed.hostname).should.be.true;
+        (!!!parsed.host).should.be.true;
+        (!!!parsed.tld).should.be.true;
+        (!!!parsed.port).should.be.true;
+        (!!!parsed.pathname).should.be.true;
+        (!!!parsed.path).should.be.true;
+        (!!!parsed.params).should.be.true;
+        (!!!parsed.search).should.be.true;
+        (!!!parsed.query).should.be.true;
+        (!!!parsed.hash).should.be.true;
+        (!!!parsed.href).should.be.true;
+    });
 });
 
 describe('decompose-url(url, template)', function () {
