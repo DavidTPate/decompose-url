@@ -63,7 +63,7 @@ function decompose(url, str) {
     } else if (charCode === octothorpe) {
         // Hash value
         url.hash = str.substring(1, str.length);
-    } else if(matches = giantPattern.exec(str)) {
+    } else if (matches = giantPattern.exec(str)) {
         // Full URL
         return decomposeUrl(url, matches);
     } else {
@@ -80,30 +80,24 @@ function decomposeUrl(url, str) {
         matches = giantPattern.exec(str);
     }
 
-    if (matches) {
-        url.protocol = matches[2] || null;
-        url.username = matches[4] || null;
-        url.password = matches[5] || null;
-        url.hostname = matches[6] || null;
-        url.host = url.hostname ? url.hostname.split('.') : null;
+    url.protocol = matches[2] || null;
+    url.username = matches[4] || null;
+    url.password = matches[5] || null;
+    url.hostname = matches[6] || null;
+    url.host = url.hostname ? url.hostname.split('.') : null;
 
-        if (url.host && url.host.length > 1) {
-            var tld = url.host && url.host.slice(url.host.length - 1)[0];
-            url.tld = !isNumberic(tld) && tld;
-        }
-
-        url.port = matches[8] || '80';
-
-        url = decompose(url, matches[9]);
+    if (url.host && url.host.length > 1) {
+        var tld = url.host && url.host.slice(url.host.length - 1)[0];
+        url.tld = !isNumberic(tld) && tld;
     }
+
+    url.port = matches[8] || '80';
+
+    url = decompose(url, matches[9]);
     return url;
 }
 
 function decomposePath(url, str) {
-    if (!str) {
-        return url;
-    }
-
     var simplePath = simplePathRegExp.exec(str);
 
     if (simplePath) {
@@ -126,10 +120,6 @@ function decomposePath(url, str) {
 }
 
 function parseQueryString(str) {
-    if (!str || typeof str !== 'string') {
-        return null;
-    }
-
     var obj = {};
 
     var matches = queryStringPattern.exec(str),

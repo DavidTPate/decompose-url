@@ -158,7 +158,7 @@ describe('decompose-url(url)', function () {
         parsed.hash.should.be.exactly('david-rules');
         parsed.href.should.be.exactly('//username:password@test.example.com/one/two/three?value=abc&value2=123#david-rules');
     });
-    it.only('should parse a protocol relative URL pointing to the root', function () {
+    it('should parse a protocol relative URL pointing to the root', function () {
         var parsed = decomposeUrl('//');
 
         (!!!parsed.protocol).should.be.true;
