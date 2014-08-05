@@ -24,7 +24,7 @@ describe('decompose-url(url)', function () {
         parsed.hash.should.be.exactly('david-rules');
         parsed.href.should.be.exactly('http://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules');
     });
-    it.only('should parse an absolute URL with an IP address', function () {
+    it('should parse an absolute URL with an IP address', function () {
         var parsed = decomposeUrl('http://127.0.0.1:8000/one/two/three?value=abc&value2=123#david-rules');
 
         parsed.protocol.should.be.exactly('http');
@@ -157,6 +157,23 @@ describe('decompose-url(url)', function () {
         parsed.query.value2.should.be.exactly('123');
         parsed.hash.should.be.exactly('david-rules');
         parsed.href.should.be.exactly('//username:password@test.example.com/one/two/three?value=abc&value2=123#david-rules');
+    });
+    it.only('should parse a protocol relative URL pointing to the root', function () {
+        var parsed = decomposeUrl('//');
+
+        (!!!parsed.protocol).should.be.true;
+        (!!!parsed.username).should.be.true;
+        (!!!parsed.hostname).should.be.true;
+        (!!!parsed.host).should.be.true;
+        (!!!parsed.tld).should.be.true;
+        parsed.port.should.be.exactly('80');
+        (!!!parsed.pathname).should.be.true;
+        (!!!parsed.path).should.be.true;
+        (!!!parsed.params).should.be.true;
+        (!!!parsed.search).should.be.true;
+        (!!!parsed.query).should.be.true;
+        (!!!parsed.hash).should.be.true;
+        parsed.href.should.be.exactly('//');
     });
     it('should parse a root relative URL', function () {
         var parsed = decomposeUrl('/one/two/three?value=abc&value2=123#david-rules');

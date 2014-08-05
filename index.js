@@ -75,10 +75,6 @@ function decompose(url, str) {
 }
 
 function decomposeUrl(url, str) {
-    if (!str) {
-        return url;
-    }
-
     var matches = str;
     if (typeof matches === 'string') {
         matches = giantPattern.exec(str);
@@ -91,9 +87,9 @@ function decomposeUrl(url, str) {
         url.hostname = matches[6] || null;
         url.host = url.hostname ? url.hostname.split('.') : null;
 
-        if (url.host.length > 1) {
+        if (url.host && url.host.length > 1) {
             var tld = url.host && url.host.slice(url.host.length - 1)[0];
-            url.tld = Number.isNaN(tld) && tld;
+            url.tld = !isNumberic(tld) && tld;
         }
 
         url.port = matches[8] || '80';
@@ -181,4 +177,8 @@ function parseTemplate(url, template) {
     }
 
     return url;
+}
+
+function isNumberic(str) {
+    return (str - parseFloat(str) + 1) >= 0
 }
