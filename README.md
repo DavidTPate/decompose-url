@@ -73,10 +73,10 @@ $ npm run-script bench
     3 tests completed.
     4 tests completed.
   
-    decomposeUrl  x 163,512 ops/sec ±1.56% (190 runs sampled)
-    nativeUrl     x  30,360 ops/sec ±8.72% (178 runs sampled)
-    parseUrl      x  47,596 ops/sec ±0.39% (194 runs sampled)
-    fastUrlParser x 202,588 ops/sec ±0.50% (194 runs sampled)
+    decomposeUrl  x 184,267 ops/sec ±0.35% (197 runs sampled)
+    nativeUrl     x  33,648 ops/sec ±0.56% (192 runs sampled)
+    parseUrl      x  50,891 ops/sec ±0.26% (196 runs sampled)
+    fastUrlParser x 218,160 ops/sec ±0.23% (197 runs sampled)
   
   > node benchmark\document-relative-url.js
   
@@ -87,10 +87,10 @@ $ npm run-script bench
     3 tests completed.
     4 tests completed.
   
-    decomposeUrl  x 249,480 ops/sec ±0.83% (192 runs sampled)
-    nativeUrl     x  48,733 ops/sec ±0.62% (192 runs sampled)
-    parseUrl      x  85,748 ops/sec ±0.38% (194 runs sampled)
-    fastUrlParser x 228,947 ops/sec ±0.32% (194 runs sampled)
+    decomposeUrl  x 290,588 ops/sec ±0.14% (197 runs sampled)
+    nativeUrl     x  52,087 ops/sec ±0.51% (195 runs sampled)
+    parseUrl      x  93,881 ops/sec ±0.29% (196 runs sampled)
+    fastUrlParser x 244,401 ops/sec ±0.17% (196 runs sampled)
   
   > node benchmark\full-url.js
   
@@ -101,10 +101,10 @@ $ npm run-script bench
     3 tests completed.
     4 tests completed.
   
-    decomposeUrl  x 175,174 ops/sec ±0.39% (195 runs sampled)
-    nativeUrl     x  30,124 ops/sec ±0.51% (195 runs sampled)
-    parseUrl      x  42,524 ops/sec ±0.47% (194 runs sampled)
-    fastUrlParser x 193,825 ops/sec ±0.43% (194 runs sampled)
+    decomposeUrl  x 175,061 ops/sec ±0.18% (196 runs sampled)
+    nativeUrl     x  31,373 ops/sec ±0.46% (195 runs sampled)
+    parseUrl      x  40,676 ops/sec ±1.89% (194 runs sampled)
+    fastUrlParser x 199,756 ops/sec ±0.24% (196 runs sampled)
   
   > node benchmark\protocol-relative-url.js
   
@@ -115,10 +115,10 @@ $ npm run-script bench
     3 tests completed.
     4 tests completed.
   
-    decomposeUrl  x 192,173 ops/sec ±0.61% (194 runs sampled)
-    nativeUrl     x  52,572 ops/sec ±0.63% (193 runs sampled)
-    parseUrl      x  87,603 ops/sec ±0.47% (193 runs sampled)
-    fastUrlParser x 227,794 ops/sec ±0.38% (193 runs sampled)
+    decomposeUrl  x 195,416 ops/sec ±0.22% (194 runs sampled)
+    nativeUrl     x  51,650 ops/sec ±0.91% (192 runs sampled)
+    parseUrl      x  85,423 ops/sec ±0.30% (194 runs sampled)
+    fastUrlParser x 227,996 ops/sec ±0.29% (197 runs sampled)
   
   > node benchmark\root-relative-url.js
   
@@ -129,10 +129,10 @@ $ npm run-script bench
     3 tests completed.
     4 tests completed.
   
-    decomposeUrl  x 248,309 ops/sec ±1.34% (188 runs sampled)
-    nativeUrl     x  48,174 ops/sec ±1.71% (184 runs sampled)
-    parseUrl      x  74,095 ops/sec ±2.57% (183 runs sampled)
-    fastUrlParser x 226,776 ops/sec ±1.34% (191 runs sampled)
+    decomposeUrl  x 261,973 ops/sec ±1.30% (193 runs sampled)
+    nativeUrl     x  48,762 ops/sec ±1.45% (184 runs sampled)
+    parseUrl      x  82,902 ops/sec ±1.40% (190 runs sampled)
+    fastUrlParser x 218,049 ops/sec ±1.56% (188 runs sampled)
 ```
 
 ## License
