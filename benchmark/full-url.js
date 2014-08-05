@@ -17,7 +17,7 @@ suite.add({
     name: 'nativeUrl',
     minSamples: 100,
     fn: function () {
-        nativeUrl.parse(testUrl);
+        nativeUrl.parse(testUrl, true);
     }
 }).add({
     name: 'parseUrl',
@@ -29,7 +29,7 @@ suite.add({
     name: 'fastUrlParser',
     minSamples: 100,
     fn: function () {
-        fastUrlParser.parse(testUrl);
+        fastUrlParser.parse(testUrl, true);
     }
 }).on('start', function onCycle() {
     process.stdout.write('  Parsing URL ' + testUrl + '\n\n')
@@ -37,4 +37,4 @@ suite.add({
     benchmarks.add(event.target);
 }).on('complete', function onComplete() {
     benchmarks.log();
-}).run({async: false});
+}).run();
