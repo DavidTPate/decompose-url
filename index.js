@@ -3,7 +3,7 @@ var simplePathRegExp = /^(\/?\/?(?!\/)[^\?#\s]*)(\?[^#\s]*)?(#[^\s]*)?$/,
     hostPattern = /^[a-z0-9_\-\.]{0,63}\.[a-z]+|localhost(?=:|\/)/i,
     authPattern = /^([a-z0-9_\-]+):([a-z0-9_\-]+)@/i,
     portPattern = /^:([0-9]*)/,
-    giantPattern = /^(([a-z0-9.+-]+):)?\/\/(?!\/)((.+):(.+)@)?([a-z0-9_\-\.]{0,63}\.[a-z]+|localhost(?=:|\/))?(:([0-9]*))?(.*)/i;
+    giantPattern = /^(([a-z0-9.+-]+):)?\/\/(?!\/)((.+):(.+)@)?([a-z0-9_\-\.]{0,63}|localhost(?=:|\/))?(:([0-9]*))?(.*)/i;
 
 var slash = 0x2F,
     question = 0x3F,
@@ -99,7 +99,8 @@ function decomposeUrl(url, str) {
         url.host = url.hostname ? url.hostname.split('.') : null;
 
         if (url.host.length > 1) {
-            url.tld = url.host ? url.host.slice(url.host.length - 1)[0] : null;
+            var tld = url.host && url.host.slice(url.host.length - 1)[0];
+            url.tld = Number.isNaN(tld) && tld;
         }
 
         url.port = matches[8] || '80';
