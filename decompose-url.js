@@ -1,12 +1,12 @@
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var o;"undefined"!=typeof window?o=window:"undefined"!=typeof global?o=global:"undefined"!=typeof self&&(o=self),o.decomposeUrl=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var simplePathRegExp = /^(\/?\/?(?!\/)[^\?#\s]*)(\?[^#\s]*)?(#[^\s]*)?$/,
-    protocolPattern = /^([a-z0-9.+-]+:)?(\/\/(?!\/))/i,
-    hostPattern = /^[a-z0-9_\-\.]{0,63}\.[a-z]+|localhost(?=:|\/)/i,
-    authPattern = /^([a-z0-9_\-]+):([a-z0-9_\-]+)@/i,
-    portPattern = /^:([0-9]*)/,
-    separator = '&',
-    equals = '=',
-    colon = ':';
+    giantPattern = /^(([a-z0-9.+-]+):)?\/\/(?!\/)((.+):(.+)@)?([a-z0-9_\-\.]{0,63}|localhost(?=:|\/))?(:([0-9]*))?(.*)/i,
+    queryStringPattern = /\??([^\?\=\&]+)\=?([^\=\&]+)?/g;
+
+var slash = 0x2F,
+    question = 0x3F,
+    octothorpe = 0x23,
+    colon = 0x3A;
 
 function Url() {
     this.protocol = null;
@@ -25,105 +25,110 @@ function Url() {
     this.href = null;
 }
 
-module.exports = function (url, template) {
-    var parsedUrl = decompose(url);
-
-    if (template) {
-        return parseTemplate(parsedUrl, template);
-    }
-    return parsedUrl;
-};
-
-function decompose(str) {
+module.exports = function (str, template) {
     var url = new Url();
+    url.href = str;
+
     if (!str || typeof str !== 'string') {
         return url;
     }
 
-    var simplePath = typeof str === 'string' && simplePathRegExp.exec(str);
 
-    if (simplePath) {
-        var search = simplePath[2] ? simplePath[2].substr(1) : null,
-            hash = simplePath[3] || null;
+    url = decompose(url, str);
 
-        var parsed = simplePath[1],
-            protocol = protocolPattern.exec(parsed);
+    if (template) {
+        return parseTemplate(url, template);
+    }
+    return url;
+};
 
-        if (protocol) {
-            url.protocol = protocol[1] && protocol[1].substr(0, protocol[1].length - 1);
-            parsed = parsed.substr(protocol[0].length);
+function decompose(url, str) {
+    if (!str || typeof str !== 'string') {
+        return url;
+    }
 
-            var auth = authPattern.exec(parsed);
-            if (auth) {
-                url.username = auth[1];
-                url.password = auth[2];
-                parsed = parsed.substr(auth[0].length);
-            }
+    var charCode = str.charCodeAt(0),
+        matches;
 
-            var host = hostPattern.exec(parsed);
-            url.hostname = host[0];
-            url.host = host[0].split('.');
-            // Remove the TLD, if there is one
-            if (url.host.length > 1) {
-                url.tld = url.host[url.host.length - 1];
-                url.host.splice(url.host.length - 1);
-            }
-            parsed = parsed.substr(host[0].length);
-
-            var port = portPattern.exec(parsed);
-            if (port) {
-                url.port = port[1];
-                parsed = parsed.substr(port[0].length);
-            } else {
-                url.port = '80';
-            }
+    if (charCode === slash) {
+        if (str.charCodeAt(1) === slash) {
+            // Protocol Relative
+            return decomposeUrl(url, str);
+        } else {
+            // Root Relative
+            url = decomposePath(url, str);
         }
-
-        url.pathname = parsed;
-
-        var path = parsed.split('/');
-        // Handle leading slash
-        if (!path[0]) {
-            path.splice(0, 1);
-        }
-        url.path = path;
-        url.href = str;
-        url.search = search;
-        url.hash = hash && hash.substr(1);
-        url.query = parseQueryString(search);
+    } else if (charCode === question) {
+        // Query String
+        url.query = parseQueryString(str);
+    } else if (charCode === octothorpe) {
+        // Hash value
+        url.hash = str.substring(1, str.length);
+    } else if (matches = giantPattern.exec(str)) {
+        // Full URL
+        return decomposeUrl(url, matches);
+    } else {
+        // Document Relative
+        url = decomposePath(url, str);
     }
 
     return url;
 }
 
-function parseQueryString(str) {
-    if (!str || typeof str !== 'string') {
-        return null;
+function decomposeUrl(url, str) {
+    var matches = str;
+    if (typeof matches === 'string') {
+        matches = giantPattern.exec(str);
     }
 
-    var spacesRegExp = /\+/g,
-        obj = {},
-        qs = str.split(separator),
-        len = qs.length,
-        pair,
-        equalsIndex,
+    url.protocol = matches[2] || null;
+    url.username = matches[4] || null;
+    url.password = matches[5] || null;
+    url.hostname = matches[6] || null;
+    url.host = url.hostname ? url.hostname.split('.') : null;
+
+    if (url.host && url.host.length > 1) {
+        var tld = url.host && url.host.slice(url.host.length - 1)[0];
+        url.tld = !isNumberic(tld) && tld;
+    }
+
+    url.port = matches[8] || '80';
+
+    url = decompose(url, matches[9]);
+    return url;
+}
+
+function decomposePath(url, str) {
+    var simplePath = simplePathRegExp.exec(str);
+
+    if (simplePath) {
+        var search = simplePath[2],
+            hash = simplePath[3] || null;
+
+        url.pathname = simplePath[1];
+
+        var path = simplePath[1].split('/');
+        // Handle leading slash
+        if (!path[0]) {
+            path.splice(0, 1);
+        }
+        url.path = path;
+        url.search = search;
+        url = decompose(url, hash);
+        url = decompose(url, search);
+    }
+    return url;
+}
+
+function parseQueryString(str) {
+    var obj = {};
+
+    var matches = queryStringPattern.exec(str),
         key,
         value;
-
-    for (var i = 0; i < len; i++) {
-        pair = qs[i].replace(spacesRegExp, '%20');
-        equalsIndex = pair.indexOf(equals);
-
-        if (equalsIndex >= 0) {
-            key = pair.substr(0, equalsIndex);
-            value = pair.substr(equalsIndex + 1);
-        } else {
-            key = pair;
-            value = '';
-        }
-
-        key = decodeURIComponent(key);
-        value = decodeURIComponent(value);
+    while (matches && queryStringPattern.lastIndex) {
+        key = decodeURIComponent(matches[1]);
+        value = decodeURIComponent(matches[2] || '');
 
         if (!obj.hasOwnProperty(key)) {
             obj[key] = value;
@@ -132,8 +137,9 @@ function parseQueryString(str) {
         } else {
             obj[key] = [obj[key], value];
         }
-    }
 
+        matches = queryStringPattern.exec(str);
+    }
     return obj;
 }
 
@@ -155,13 +161,17 @@ function parseTemplate(url, template) {
         key;
     for (var i = 0; i < len; i++) {
         key = split[i];
-        if (key[0] === colon) {
+        if (key.charCodeAt(0) === colon) {
             key = key.substr(1);
             url.params[key] = url.path[i];
         }
     }
 
     return url;
+}
+
+function isNumberic(str) {
+    return (str - parseFloat(str) + 1) >= 0
 }
 },{}]},{},[1])(1)
 });
