@@ -1,7 +1,7 @@
 {
     "name": "decompose-url",
     "description": "A quick and easy URL decomposer for breaking URLs into their constituent parts.",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "author": "David Pate <me@davidtpate.com> (http://davidtpate.com)",
     "keywords": [
         "url",
