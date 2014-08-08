@@ -5,7 +5,7 @@ var Benchmark = require('benchmark'),
     nativeUrl = require('url'),
     fastUrlParser = require('fast-url-parser'),
     suite = new Benchmark.Suite,
-    testUrl = 'one/two/three?value=abc&value2=123#david-rules';
+    testUrl = 'http://test.example.com/one';
 
 suite.add({
     name: 'decomposeUrl',

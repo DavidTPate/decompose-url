@@ -5,7 +5,7 @@ var Benchmark = require('benchmark'),
     nativeUrl = require('url'),
     fastUrlParser = require('fast-url-parser'),
     suite = new Benchmark.Suite,
-    testUrl = 'http://username:password@test.example.com:8000/one/two/three?value=abc&value2=123#david-rules';
+    testUrl = 'one';
 
 suite.add({
     name: 'decomposeUrl',
@@ -17,7 +17,7 @@ suite.add({
     name: 'nativeUrl',
     minSamples: 100,
     fn: function () {
-        nativeUrl.parse(testUrl, true);
+        nativeUrl.parse(testUrl);
     }
 }).add({
     name: 'parseUrl',
@@ -29,7 +29,7 @@ suite.add({
     name: 'fastUrlParser',
     minSamples: 100,
     fn: function () {
-        fastUrlParser.parse(testUrl, true);
+        fastUrlParser.parse(testUrl);
     }
 }).on('start', function onCycle() {
     process.stdout.write('  Parsing URL ' + testUrl + '\n\n')
