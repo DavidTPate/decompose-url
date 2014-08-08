@@ -3,14 +3,12 @@ var decomposeUrl = require('..'),
 
 describe('decompose-url(url)', function () {
     it('should parse an absolute URL', function () {
-        var parsed = decomposeUrl.parse('http://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules');
+        var parsed = decomposeUrl.parse('https://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules');
 
-        parsed.protocol.should.be.exactly('http:');
-        (!!!parsed.username).should.be.true;
-        (!!!parsed.password).should.be.true;
+        parsed.protocol.should.be.exactly('https:');
+        (!!!parsed.auth).should.be.true;
         parsed.hostname.should.be.exactly('test.example.com');
-        parsed.host[0].should.be.exactly('test');
-        parsed.host[1].should.be.exactly('example');
+        parsed.host.should.be.exactly('test.example.com:8000');
         parsed.port.should.be.exactly('8000');
         parsed.pathname.should.be.exactly('/one/two/three');
         parsed.path.should.be.exactly('/one/two/three?value=abc&value2=123');
@@ -18,19 +16,15 @@ describe('decompose-url(url)', function () {
         parsed.search.should.be.exactly('?value=abc&value2=123');
         parsed.query.should.be.exactly('value=abc&value2=123');
         parsed.hash.should.be.exactly('#david-rules');
-        parsed.href.should.be.exactly('http://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules');
+        parsed.href.should.be.exactly('https://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules');
     });
     it('should parse an absolute URL with an IP address', function () {
         var parsed = decomposeUrl.parse('http://127.0.0.1:8000/one/two/three?value=abc&value2=123#david-rules', true);
 
         parsed.protocol.should.be.exactly('http:');
-        (!!!parsed.username).should.be.true;
-        (!!!parsed.password).should.be.true;
+        (!!!parsed.auth).should.be.true;
         parsed.hostname.should.be.exactly('127.0.0.1');
-        parsed.host[0].should.be.exactly('127');
-        parsed.host[1].should.be.exactly('0');
-        parsed.host[2].should.be.exactly('0');
-        parsed.host[3].should.be.exactly('1');
+        parsed.host.should.be.exactly('127.0.0.1:8000');
         parsed.port.should.be.exactly('8000');
         parsed.pathname.should.be.exactly('/one/two/three');
         parsed.path.should.be.exactly('/one/two/three?value=abc&value2=123');
@@ -47,8 +41,7 @@ describe('decompose-url(url)', function () {
         parsed.protocol.should.be.exactly('http:');
         parsed.auth.should.be.exactly('username:password');
         parsed.hostname.should.be.exactly('test.example.com');
-        parsed.host[0].should.be.exactly('test');
-        parsed.host[1].should.be.exactly('example');
+        parsed.host.should.be.exactly('test.example.com:8000');
         parsed.port.should.be.exactly('8000');
         parsed.pathname.should.be.exactly('/one/two/three');
         parsed.path.should.be.exactly('/one/two/three?value=abc&value2=123');
@@ -63,12 +56,9 @@ describe('decompose-url(url)', function () {
         var parsed = decomposeUrl.parse('http://localhost:8000/one/two/three?value=abc&value2=123#david-rules');
 
         parsed.protocol.should.be.exactly('http:');
-        (!!!parsed.username).should.be.true;
-        (!!!parsed.password).should.be.true;
+        (!!!parsed.auth).should.be.true;
         parsed.hostname.should.be.exactly('localhost');
-        parsed.host[0].should.be.exactly('localhost');
-        (!!!parsed.password).should.be.true;
-        parsed.port.should.be.exactly('8000');
+        parsed.host.should.be.exactly('localhost:8000');
         parsed.pathname.should.be.exactly('/one/two/three');
         parsed.path.should.be.exactly('/one/two/three?value=abc&value2=123');
         (!!!parsed.params).should.be.true;
@@ -81,12 +71,10 @@ describe('decompose-url(url)', function () {
         var parsed = decomposeUrl.parse('http://localhost/one/two/three?value=abc&value2=123#david-rules', true);
 
         parsed.protocol.should.be.exactly('http:');
-        (!!!parsed.username).should.be.true;
-        (!!!parsed.password).should.be.true;
+        (!!!parsed.auth).should.be.true;
         parsed.hostname.should.be.exactly('localhost');
-        parsed.host[0].should.be.exactly('localhost');
-        (!!!parsed.password).should.be.true;
-        parsed.port.should.be.exactly('80');
+        parsed.host.should.be.exactly('localhost');
+        (!!!parsed.port).should.be.true;
         parsed.pathname.should.be.exactly('/one/two/three');
         parsed.path.should.be.exactly('/one/two/three?value=abc&value2=123');
         (!!!parsed.params).should.be.true;
@@ -100,12 +88,10 @@ describe('decompose-url(url)', function () {
         var parsed = decomposeUrl.parse('//test.example.com/one/two/three?value=abc&value2=123#david-rules');
 
         (!!!parsed.protocol).should.be.true;
-        (!!!parsed.username).should.be.true;
-        (!!!parsed.password).should.be.true;
+        (!!!parsed.auth).should.be.true;
         parsed.hostname.should.be.exactly('test.example.com');
-        parsed.host[0].should.be.exactly('test');
-        parsed.host[1].should.be.exactly('example');
-        parsed.port.should.be.exactly('80');
+        parsed.host.should.be.exactly('test.example.com');
+        (!!!parsed.port).should.be.true;
         parsed.pathname.should.be.exactly('/one/two/three');
         parsed.path.should.be.exactly('/one/two/three?value=abc&value2=123');
         (!!!parsed.params).should.be.true;
@@ -120,9 +106,8 @@ describe('decompose-url(url)', function () {
         (!!!parsed.protocol).should.be.true;
         parsed.auth.should.be.exactly('username:password');
         parsed.hostname.should.be.exactly('test.example.com');
-        parsed.host[0].should.be.exactly('test');
-        parsed.host[1].should.be.exactly('example');
-        parsed.port.should.be.exactly('80');
+        parsed.host.should.be.exactly('test.example.com');
+        (!!!parsed.port).should.be.true;
         parsed.pathname.should.be.exactly('/one/two/three');
         parsed.path.should.be.exactly('/one/two/three?value=abc&value2=123');
         (!!!parsed.params).should.be.true;
@@ -136,7 +121,7 @@ describe('decompose-url(url)', function () {
         var parsed = decomposeUrl.parse('//');
 
         (!!!parsed.protocol).should.be.true;
-        (!!!parsed.username).should.be.true;
+        (!!!parsed.auth).should.be.true;
         (!!!parsed.hostname).should.be.true;
         (!!!parsed.host).should.be.true;
         (!!!parsed.port).should.be.true;
@@ -152,8 +137,7 @@ describe('decompose-url(url)', function () {
         var parsed = decomposeUrl.parse('/one/two/three?value=abc&value2=123#david-rules');
 
         (!!!parsed.protocol).should.be.true;
-        (!!!parsed.username).should.be.true;
-        (!!!parsed.password).should.be.true;
+        (!!!parsed.auth).should.be.true;
         (!!!parsed.hostname).should.be.true;
         (!!!parsed.host).should.be.true;
         (!!!parsed.port).should.be.true;
@@ -169,8 +153,7 @@ describe('decompose-url(url)', function () {
         var parsed = decomposeUrl.parse('/one/two/three');
 
         (!!!parsed.protocol).should.be.true;
-        (!!!parsed.username).should.be.true;
-        (!!!parsed.password).should.be.true;
+        (!!!parsed.auth).should.be.true;
         (!!!parsed.hostname).should.be.true;
         (!!!parsed.host).should.be.true;
         (!!!parsed.port).should.be.true;
@@ -186,8 +169,7 @@ describe('decompose-url(url)', function () {
         var parsed = decomposeUrl.parse('one/two/three?value=abc&value2=123#david-rules');
 
         (!!!parsed.protocol).should.be.true;
-        (!!!parsed.username).should.be.true;
-        (!!!parsed.password).should.be.true;
+        (!!!parsed.auth).should.be.true;
         (!!!parsed.hostname).should.be.true;
         (!!!parsed.host).should.be.true;
         (!!!parsed.port).should.be.true;
@@ -203,8 +185,7 @@ describe('decompose-url(url)', function () {
         var parsed = decomposeUrl.parse('one/two/three?value=abc&value=123&value2=123#david-rules', true);
 
         (!!!parsed.protocol).should.be.true;
-        (!!!parsed.username).should.be.true;
-        (!!!parsed.password).should.be.true;
+        (!!!parsed.auth).should.be.true;
         (!!!parsed.hostname).should.be.true;
         (!!!parsed.host).should.be.true;
         (!!!parsed.port).should.be.true;
@@ -222,8 +203,7 @@ describe('decompose-url(url)', function () {
         var parsed = decomposeUrl.parse('one/two/three?value=abc&value=123&value=123', true);
 
         (!!!parsed.protocol).should.be.true;
-        (!!!parsed.username).should.be.true;
-        (!!!parsed.password).should.be.true;
+        (!!!parsed.auth).should.be.true;
         (!!!parsed.hostname).should.be.true;
         (!!!parsed.host).should.be.true;
         (!!!parsed.port).should.be.true;
@@ -241,8 +221,7 @@ describe('decompose-url(url)', function () {
         var parsed = decomposeUrl.parse('?value=abc&value=123&value=123', true);
 
         (!!!parsed.protocol).should.be.true;
-        (!!!parsed.username).should.be.true;
-        (!!!parsed.password).should.be.true;
+        (!!!parsed.auth).should.be.true;
         (!!!parsed.hostname).should.be.true;
         (!!!parsed.host).should.be.true;
         (!!!parsed.port).should.be.true;
@@ -260,8 +239,7 @@ describe('decompose-url(url)', function () {
         var parsed = decomposeUrl.parse('#david-rules');
 
         (!!!parsed.protocol).should.be.true;
-        (!!!parsed.username).should.be.true;
-        (!!!parsed.password).should.be.true;
+        (!!!parsed.auth).should.be.true;
         (!!!parsed.hostname).should.be.true;
         (!!!parsed.host).should.be.true;
         (!!!parsed.port).should.be.true;
@@ -277,8 +255,7 @@ describe('decompose-url(url)', function () {
         var parsed = decomposeUrl.parse('one/two/three?value=', true);
 
         (!!!parsed.protocol).should.be.true;
-        (!!!parsed.username).should.be.true;
-        (!!!parsed.password).should.be.true;
+        (!!!parsed.auth).should.be.true;
         (!!!parsed.hostname).should.be.true;
         (!!!parsed.host).should.be.true;
         (!!!parsed.port).should.be.true;
@@ -294,8 +271,7 @@ describe('decompose-url(url)', function () {
         var parsed = decomposeUrl.parse('one/two/three?value', true);
 
         (!!!parsed.protocol).should.be.true;
-        (!!!parsed.username).should.be.true;
-        (!!!parsed.password).should.be.true;
+        (!!!parsed.auth).should.be.true;
         (!!!parsed.hostname).should.be.true;
         (!!!parsed.host).should.be.true;
         (!!!parsed.port).should.be.true;
@@ -311,8 +287,7 @@ describe('decompose-url(url)', function () {
         var parsed = decomposeUrl.parse('one/two/three?', true);
 
         (!!!parsed.protocol).should.be.true;
-        (!!!parsed.username).should.be.true;
-        (!!!parsed.password).should.be.true;
+        (!!!parsed.auth).should.be.true;
         (!!!parsed.hostname).should.be.true;
         (!!!parsed.host).should.be.true;
         (!!!parsed.port).should.be.true;
@@ -328,8 +303,7 @@ describe('decompose-url(url)', function () {
         var parsed = decomposeUrl.parse('one/two/three?value=123&', true);
 
         (!!!parsed.protocol).should.be.true;
-        (!!!parsed.username).should.be.true;
-        (!!!parsed.password).should.be.true;
+        (!!!parsed.auth).should.be.true;
         (!!!parsed.hostname).should.be.true;
         (!!!parsed.host).should.be.true;
         (!!!parsed.port).should.be.true;
@@ -345,8 +319,7 @@ describe('decompose-url(url)', function () {
         var parsed = decomposeUrl.parse('one/two/three#david-rules', true);
 
         (!!!parsed.protocol).should.be.true;
-        (!!!parsed.username).should.be.true;
-        (!!!parsed.password).should.be.true;
+        (!!!parsed.auth).should.be.true;
         (!!!parsed.hostname).should.be.true;
         (!!!parsed.host).should.be.true;
         (!!!parsed.port).should.be.true;
@@ -362,8 +335,7 @@ describe('decompose-url(url)', function () {
         var parsed = decomposeUrl.parse('one/two/three?value=abc&value=123&value2=123');
 
         (!!!parsed.protocol).should.be.true;
-        (!!!parsed.username).should.be.true;
-        (!!!parsed.password).should.be.true;
+        (!!!parsed.auth).should.be.true;
         (!!!parsed.hostname).should.be.true;
         (!!!parsed.host).should.be.true;
         (!!!parsed.port).should.be.true;
@@ -379,8 +351,7 @@ describe('decompose-url(url)', function () {
         var parsed = decomposeUrl.parse('one/two/three');
 
         (!!!parsed.protocol).should.be.true;
-        (!!!parsed.username).should.be.true;
-        (!!!parsed.password).should.be.true;
+        (!!!parsed.auth).should.be.true;
         (!!!parsed.hostname).should.be.true;
         (!!!parsed.host).should.be.true;
         (!!!parsed.port).should.be.true;
@@ -396,7 +367,7 @@ describe('decompose-url(url)', function () {
         var parsed = decomposeUrl.parse('');
 
         (!!!parsed.protocol).should.be.true;
-        (!!!parsed.username).should.be.true;
+        (!!!parsed.auth).should.be.true;
         (!!!parsed.hostname).should.be.true;
         (!!!parsed.host).should.be.true;
         (!!!parsed.port).should.be.true;
@@ -412,7 +383,7 @@ describe('decompose-url(url)', function () {
         var parsed = decomposeUrl.parse('(╯°□°)╯︵ ┻━┻');
 
         (!!!parsed.protocol).should.be.true;
-        (!!!parsed.username).should.be.true;
+        (!!!parsed.auth).should.be.true;
         (!!!parsed.hostname).should.be.true;
         (!!!parsed.host).should.be.true;
         (!!!parsed.port).should.be.true;
@@ -428,7 +399,7 @@ describe('decompose-url(url)', function () {
         var parsed = decomposeUrl.parse(undefined);
 
         (!!!parsed.protocol).should.be.true;
-        (!!!parsed.username).should.be.true;
+        (!!!parsed.auth).should.be.true;
         (!!!parsed.hostname).should.be.true;
         (!!!parsed.host).should.be.true;
         (!!!parsed.port).should.be.true;
@@ -449,8 +420,7 @@ describe('decompose-url(url, template)', function () {
         parsed.protocol.should.be.exactly('http:');
         (!!!parsed.auth).should.be.true;
         parsed.hostname.should.be.exactly('test.example.com');
-        parsed.host[0].should.be.exactly('test');
-        parsed.host[1].should.be.exactly('example');
+        parsed.host.should.be.exactly('test.example.com:8000');
         parsed.port.should.be.exactly('8000');
         parsed.pathname.should.be.exactly('/one/two/three');
         parsed.path.should.be.exactly('/one/two/three?value=abc&value2=123');
@@ -468,8 +438,7 @@ describe('decompose-url(url, template)', function () {
         var parsed = decomposeUrl.parse('one/two/three?value=abc&value2=123#david-rules', true);
 
         (!!!parsed.protocol).should.be.true;
-        (!!!parsed.username).should.be.true;
-        (!!!parsed.password).should.be.true;
+        (!!!parsed.auth).should.be.true;
         (!!!parsed.hostname).should.be.true;
         (!!!parsed.host).should.be.true;
         (!!!parsed.port).should.be.true;
@@ -490,8 +459,7 @@ describe('decompose-url(url, template)', function () {
         var parsed = decomposeUrl.parse('one/two/three?value=abc&value=123&value2=123#david-rules');
 
         (!!!parsed.protocol).should.be.true;
-        (!!!parsed.username).should.be.true;
-        (!!!parsed.password).should.be.true;
+        (!!!parsed.auth).should.be.true;
         (!!!parsed.hostname).should.be.true;
         (!!!parsed.host).should.be.true;
         (!!!parsed.port).should.be.true;
@@ -510,8 +478,7 @@ describe('decompose-url(url, template)', function () {
         var parsed = decomposeUrl.parse('one/two/three?value=abc&value2=123#david-rules');
 
         (!!!parsed.protocol).should.be.true;
-        (!!!parsed.username).should.be.true;
-        (!!!parsed.password).should.be.true;
+        (!!!parsed.auth).should.be.true;
         (!!!parsed.hostname).should.be.true;
         (!!!parsed.host).should.be.true;
         (!!!parsed.port).should.be.true;
@@ -529,8 +496,7 @@ describe('decompose-url(url, template)', function () {
         var parsed = decomposeUrl.parse('one/two/three?value=abc&value2=123#david-rules');
 
         (!!!parsed.protocol).should.be.true;
-        (!!!parsed.username).should.be.true;
-        (!!!parsed.password).should.be.true;
+        (!!!parsed.auth).should.be.true;
         (!!!parsed.hostname).should.be.true;
         (!!!parsed.host).should.be.true;
         (!!!parsed.port).should.be.true;
@@ -550,8 +516,7 @@ describe('decompose-url(url, template)', function () {
         var parsed = decomposeUrl.parse('one/two/three?value=abc&value2=123#david-rules');
 
         (!!!parsed.protocol).should.be.true;
-        (!!!parsed.username).should.be.true;
-        (!!!parsed.password).should.be.true;
+        (!!!parsed.auth).should.be.true;
         (!!!parsed.hostname).should.be.true;
         (!!!parsed.host).should.be.true;
         (!!!parsed.port).should.be.true;
@@ -571,7 +536,7 @@ describe('decompose-url(url, template)', function () {
         var parsed = decomposeUrl.parse('', '/:value1');
 
         (!!!parsed.protocol).should.be.true;
-        (!!!parsed.username).should.be.true;
+        (!!!parsed.auth).should.be.true;
         (!!!parsed.hostname).should.be.true;
         (!!!parsed.host).should.be.true;
         (!!!parsed.port).should.be.true;
@@ -587,7 +552,7 @@ describe('decompose-url(url, template)', function () {
         var parsed = decomposeUrl.parse('(╯°□°)╯︵ ┻━┻', '/:value1');
 
         (!!!parsed.protocol).should.be.true;
-        (!!!parsed.username).should.be.true;
+        (!!!parsed.auth).should.be.true;
         (!!!parsed.hostname).should.be.true;
         (!!!parsed.host).should.be.true;
         (!!!parsed.port).should.be.true;

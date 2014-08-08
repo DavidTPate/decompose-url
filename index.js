@@ -1,7 +1,6 @@
 var simplePathPattern = /^(\/?[a-z0-9-._~!$&'()*+,;=:@%\/]+)(\?([a-z0-9!$&'()*+-,;=:#\[\]@\/\?%]+)?)?(#[a-z0-9!$&'()*+,;=:#-\[\]@\/\?%]+)?$/i,
     giantPattern = /^([a-z0-9\.\+-]+:)?\/\/(([a-z0-9!$&'()*+-,;=#\[\]@\/\?%]+:[a-z0-9!$&'()*+-,;=#\[\]@\/\?%]+)@)?([a-z0-9\-\.]+)(:([0-9]+))?(\/[a-z0-9-._~!$&'()*+,;=:@%\/]+)(\?[a-z0-9!$&'()*+-,;=:#\[\]@\/\?%]+)(#[a-z0-9!$&'()*+,;=:#-\[\]@\/\?%]+)$/i,
     protocolPattern = /^[a-z0-9\.\+-]+:/,
-    hostnamePartPattern = /([a-z0-9\-]+)\.?/ig,
     queryStringPartPattern = /\??([^\?\=\&]+)\=?([^\=\&]+)?/g;
 
 var slash = 0x2F,
@@ -85,8 +84,8 @@ function decomposeUrl(url, str) {
     if (matches) {
         url.protocol = matches[1] || null;
         url.auth = matches[3] || null;
+        url.port = matches[6] || null;
         decomposeHostname(url, matches[4]);
-        url.port = matches[6] || '80';
         decomposeQueryString(url, matches[8]);
         decomposePathname(url, matches[7]);
         decomposeHash(url, matches[9]);
@@ -111,16 +110,7 @@ function decomposeHostname(url, str) {
     }
 
     url.hostname = str;
-    url.host = [];
-
-    var matches = hostnamePartPattern.exec(str);
-    while (matches && hostnamePartPattern.lastIndex) {
-        if (matches[1]) {
-            url.host.push(matches[1]);
-        }
-        matches = hostnamePartPattern.exec(str);
-    }
-
+    url.host = str + (url.port ? ':' + url.port : '');
     return url;
 }
 
