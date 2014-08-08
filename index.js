@@ -1,6 +1,5 @@
 var simplePathRegExp = /^(\/?[a-z0-9-._~!$&'()*+,;=:@%\/]+)(\?([a-z0-9!$&'()*+-,;=:#\[\]@\/\?%]+)?)?(#[a-z0-9!$&'()*+,;=:#-\[\]@\/\?%]+)?$/i,
     giantPattern = /^(([a-z0-9\.\+-]+):)?\/\/(([a-z0-9!$&'()*+-,;=#\[\]@\/\?%]+):([a-z0-9!$&'()*+-,;=#\[\]@\/\?%]+)@)?([a-z0-9\-\.]+)(:([0-9]+))?(\/[a-z0-9-._~!$&'()*+,;=:@%\/]+)(\?[a-z0-9!$&'()*+-,;=:#\[\]@\/\?%]+)(#[a-z0-9!$&'()*+,;=:#-\[\]@\/\?%]+)$/i,
-    pathPartPattern = /\/?([a-z0-9-._~!$&'()*+,;=:@%]+)/ig,
     hostnamePartPattern = /([a-z0-9\-]+)\.?/ig,
     queryStringPartPattern = /\??([^\?\=\&]+)\=?([^\=\&]+)?/g;
 
@@ -59,13 +58,13 @@ function decompose(url, str) {
         }
     } else if (charCode === question) {
         // Query String
-       decomposeQueryString(url, str);
+        decomposeQueryString(url, str);
     } else if (charCode === octothorpe) {
         // Hash value
         decomposeHash(url, str);
     } else if (matches = giantPattern.exec(str)) {
         // Full URL
-        return decomposeUrl(url, matches);
+        decomposeUrl(url, matches);
     } else {
         // Document Relative
         decomposePath(url, str);
@@ -125,16 +124,7 @@ function decomposeHostname(url, str) {
 
 function decomposePathname(url, str) {
     url.pathname = str;
-    url.path = [];
-
-    var matches = pathPartPattern.exec(str);
-    while (matches && pathPartPattern.lastIndex) {
-        if (matches[1]) {
-            url.path.push(matches[1]);
-        }
-        matches = pathPartPattern.exec(str);
-    }
-
+    url.path = str.split('/');
     return url;
 }
 
