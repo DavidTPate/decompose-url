@@ -1,6 +1,8 @@
-var simplePathRegExp = /^(\/?\/?(?!\/)[^\?#\s]*)(\?[^#\s]*)?(#[^\s]*)?$/,
-    giantPattern = /^(([a-z0-9.+-]+):)?\/\/(?!\/)((.+):(.+)@)?([a-z0-9_\-\.]{0,63}|localhost(?=:|\/))?(:([0-9]*))?(.*)/i,
-    queryStringPattern = /\??([^\?\=\&]+)\=?([^\=\&]+)?/g;
+var simplePathRegExp = /^(\/?[a-z0-9-._~!$&'()*+,;=:@%\/]+)(\?([a-z0-9!$&'()*+-,;=:#\[\]@\/\?%]+)?)?(#[a-z0-9!$&'()*+,;=:#-\[\]@\/\?%]+)?$/i,
+    giantPattern = /^(([a-z0-9\.\+-]+):)?\/\/(([a-z0-9!$&'()*+-,;=#\[\]@\/\?%]+):([a-z0-9!$&'()*+-,;=#\[\]@\/\?%]+)@)?([a-z0-9\-\.]+)(:([0-9]+))?(\/[a-z0-9-._~!$&'()*+,;=:@%\/]+)(\?[a-z0-9!$&'()*+-,;=:#\[\]@\/\?%]+)(#[a-z0-9!$&'()*+,;=:#-\[\]@\/\?%]+)$/i,
+    pathPartPattern = /\/?([a-z0-9-._~!$&'()*+,;=:@%]+)/ig,
+    hostnamePartPattern = /([a-z0-9\-]+)\.?/ig,
+    queryStringPartPattern = /\??([^\?\=\&]+)\=?([^\=\&]+)?/g;
 
 var slash = 0x2F,
     question = 0x3F,
@@ -13,7 +15,6 @@ function Url() {
     this.password = null;
     this.hostname = null;
     this.host = null;
-    this.tld = null;
     this.port = null;
     this.pathname = null;
     this.path = null;
@@ -31,7 +32,6 @@ module.exports = function (str, template) {
     if (!str || typeof str !== 'string') {
         return url;
     }
-
 
     url = decompose(url, str);
 
@@ -52,23 +52,23 @@ function decompose(url, str) {
     if (charCode === slash) {
         if (str.charCodeAt(1) === slash) {
             // Protocol Relative
-            return decomposeUrl(url, str);
+            decomposeUrl(url, str);
         } else {
             // Root Relative
-            url = decomposePath(url, str);
+            decomposePath(url, str);
         }
     } else if (charCode === question) {
         // Query String
-        url.query = parseQueryString(str);
+       decomposeQueryString(url, str);
     } else if (charCode === octothorpe) {
         // Hash value
-        url.hash = str.substring(1, str.length);
+        decomposeHash(url, str);
     } else if (matches = giantPattern.exec(str)) {
         // Full URL
         return decomposeUrl(url, matches);
     } else {
         // Document Relative
-        url = decomposePath(url, str);
+        decomposePath(url, str);
     }
 
     return url;
@@ -80,66 +80,95 @@ function decomposeUrl(url, str) {
         matches = giantPattern.exec(str);
     }
 
-    url.protocol = matches[2] || null;
-    url.username = matches[4] || null;
-    url.password = matches[5] || null;
-    url.hostname = matches[6] || null;
-    url.host = url.hostname ? url.hostname.split('.') : null;
-
-    if (url.host && url.host.length > 1) {
-        var tld = url.host && url.host.slice(url.host.length - 1)[0];
-        url.tld = !isNumberic(tld) && tld;
+    if (matches) {
+        url.protocol = matches[2] || null;
+        url.username = matches[4] || null;
+        url.password = matches[5] || null;
+        decomposeHostname(url, matches[6]);
+        url.port = matches[8] || '80';
+        decomposePathname(url, matches[9]);
+        decomposeQueryString(url, matches[10]);
+        decomposeHash(url, matches[11]);
     }
-
-    url.port = matches[8] || '80';
-
-    url = decompose(url, matches[9]);
     return url;
 }
 
 function decomposePath(url, str) {
-    var simplePath = simplePathRegExp.exec(str);
+    var matches = simplePathRegExp.exec(str);
 
-    if (simplePath) {
-        var search = simplePath[2],
-            hash = simplePath[3] || null;
-
-        url.pathname = simplePath[1];
-
-        var path = simplePath[1].split('/');
-        // Handle leading slash
-        if (!path[0]) {
-            path.splice(0, 1);
-        }
-        url.path = path;
-        url.search = search;
-        url = decompose(url, hash);
-        url = decompose(url, search);
+    if (matches) {
+        decomposePathname(url, matches[1]);
+        decomposeQueryString(url, matches[2]);
+        decomposeHash(url, matches[4]);
     }
     return url;
 }
 
-function parseQueryString(str) {
-    var obj = {};
+function decomposeHostname(url, str) {
+    if (!str) {
+        return url;
+    }
 
-    var matches = queryStringPattern.exec(str),
+    url.hostname = str;
+    url.host = [];
+
+    var matches = hostnamePartPattern.exec(str);
+    while (matches && hostnamePartPattern.lastIndex) {
+        if (matches[1]) {
+            url.host.push(matches[1]);
+        }
+        matches = hostnamePartPattern.exec(str);
+    }
+
+    return url;
+}
+
+function decomposePathname(url, str) {
+    url.pathname = str;
+    url.path = [];
+
+    var matches = pathPartPattern.exec(str);
+    while (matches && pathPartPattern.lastIndex) {
+        if (matches[1]) {
+            url.path.push(matches[1]);
+        }
+        matches = pathPartPattern.exec(str);
+    }
+
+    return url;
+}
+
+function decomposeQueryString(url, str) {
+    if (!str) {
+        return url;
+    }
+
+    url.search = str;
+    url.query = {};
+
+    var matches = queryStringPartPattern.exec(str),
         key,
         value;
-    while (matches && queryStringPattern.lastIndex) {
+    while (matches && queryStringPartPattern.lastIndex) {
         key = decodeURIComponent(matches[1]);
         value = decodeURIComponent(matches[2] || '');
 
-        if (!obj.hasOwnProperty(key)) {
-            obj[key] = value;
-        } else if (Array.isArray(obj[key])) {
-            obj[key].push(value);
+        if (!url.query.hasOwnProperty(key)) {
+            url.query[key] = value;
+        } else if (Array.isArray(url.query[key])) {
+            url.query[key].push(value);
         } else {
-            obj[key] = [obj[key], value];
+            url.query[key] = [url.query[key], value];
         }
 
-        matches = queryStringPattern.exec(str);
+        matches = queryStringPartPattern.exec(str);
     }
-    return obj;
+    return url;
+}
+
+function decomposeHash(url, str) {
+    url.hash = str;
+    return url;
 }
 
 function parseTemplate(url, template) {
@@ -167,8 +196,4 @@ function parseTemplate(url, template) {
     }
 
     return url;
-}
-
-function isNumberic(str) {
-    return (str - parseFloat(str) + 1) >= 0
 }
