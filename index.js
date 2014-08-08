@@ -1,5 +1,6 @@
 var simplePathRegExp = /^(\/?[a-z0-9-._~!$&'()*+,;=:@%\/]+)(\?([a-z0-9!$&'()*+-,;=:#\[\]@\/\?%]+)?)?(#[a-z0-9!$&'()*+,;=:#-\[\]@\/\?%]+)?$/i,
     giantPattern = /^(([a-z0-9\.\+-]+):)?\/\/(([a-z0-9!$&'()*+-,;=#\[\]@\/\?%]+):([a-z0-9!$&'()*+-,;=#\[\]@\/\?%]+)@)?([a-z0-9\-\.]+)(:([0-9]+))?(\/[a-z0-9-._~!$&'()*+,;=:@%\/]+)(\?[a-z0-9!$&'()*+-,;=:#\[\]@\/\?%]+)(#[a-z0-9!$&'()*+,;=:#-\[\]@\/\?%]+)$/i,
+    protocolPattern = /^[a-z0-9\.\+-]+:/,
     hostnamePartPattern = /([a-z0-9\-]+)\.?/ig,
     queryStringPartPattern = /\??([^\?\=\&]+)\=?([^\=\&]+)?/g;
 
@@ -45,8 +46,7 @@ function decompose(url, str) {
         return url;
     }
 
-    var charCode = str.charCodeAt(0),
-        matches;
+    var charCode = str.charCodeAt(0);
 
     if (charCode === slash) {
         if (str.charCodeAt(1) === slash) {
@@ -62,9 +62,9 @@ function decompose(url, str) {
     } else if (charCode === octothorpe) {
         // Hash value
         decomposeHash(url, str);
-    } else if (matches = giantPattern.exec(str)) {
+    } else if (protocolPattern.exec(str)) {
         // Full URL
-        decomposeUrl(url, matches);
+        decomposeUrl(url, str);
     } else {
         // Document Relative
         decomposePath(url, str);
@@ -125,6 +125,9 @@ function decomposeHostname(url, str) {
 function decomposePathname(url, str) {
     url.pathname = str;
     url.path = str.split('/');
+    if (!url.path[0]) {
+        url.path.shift();
+    }
     return url;
 }
 
