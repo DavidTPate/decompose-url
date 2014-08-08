@@ -25,8 +25,14 @@ function Url() {
     this.hash = null;
 }
 
+Url.prototype.getPathParams = function(template) {
+    return parseTemplate(this, template);
+};
+
 var shouldParseQueryString;
-module.exports = function (str, parseQueryString, slashesDenoteHost, template) {
+
+module.exports.parse = parse;
+function parse(str, parseQueryString, slashesDenoteHost) {
     var url = new Url();
     url.href = str;
 
@@ -35,14 +41,8 @@ module.exports = function (str, parseQueryString, slashesDenoteHost, template) {
     }
 
     shouldParseQueryString = parseQueryString;
-
-    url = decompose(url, str);
-
-    if (template) {
-        return parseTemplate(url, template);
-    }
-    return url;
-};
+    return decompose(url, str);
+}
 
 function decompose(url, str) {
     if (!str || typeof str !== 'string') {
@@ -167,12 +167,22 @@ function decomposeHash(url, str) {
     return url;
 }
 
+module.exports.format = format;
+function format(obj) {
+    //TODO: Implement this.
+}
+
+module.exports.resolve = resolve;
+function resolve(from, to) {
+    //TODO: Implement this.
+}
+
 function parseTemplate(url, template) {
     if (!url || !url.pathname || !template || typeof template !== 'string') {
-        return url;
+        return {};
     }
 
-    url.params = {};
+    var params = {};
 
     var split = template.split('/');
     // Handle leading slash
@@ -181,8 +191,8 @@ function parseTemplate(url, template) {
     }
 
     var paths = url.pathname.split('/');
-    if (!url.path[0]) {
-        url.path.shift();
+    if (!paths[0]) {
+        paths.shift();
     }
 
     // We can only find values for paths that are in the url
@@ -192,9 +202,9 @@ function parseTemplate(url, template) {
         key = split[i];
         if (key.charCodeAt(0) === colon) {
             key = key.substr(1);
-            url.params[key] = paths[i];
+            params[key] = paths[i];
         }
     }
 
-    return url;
+    return params;
 }
