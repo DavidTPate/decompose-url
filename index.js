@@ -24,7 +24,7 @@ function Url() {
     this.hash = null;
 }
 
-Url.prototype.getPathParams = function(template) {
+Url.prototype.getPathParams = function (template) {
     return parseTemplate(this, template);
 };
 
@@ -44,10 +44,6 @@ function parse(str, parseQueryString, slashesDenoteHost) {
 }
 
 function decompose(url, str) {
-    if (!str || typeof str !== 'string') {
-        return url;
-    }
-
     var charCode = str.charCodeAt(0);
 
     if (charCode === slash) {
@@ -76,10 +72,7 @@ function decompose(url, str) {
 }
 
 function decomposeUrl(url, str) {
-    var matches = str;
-    if (typeof matches === 'string') {
-        matches = giantPattern.exec(str);
-    }
+    var matches = giantPattern.exec(str);
 
     if (matches) {
         url.protocol = matches[1] || null;
@@ -105,10 +98,6 @@ function decomposePath(url, str) {
 }
 
 function decomposeHostname(url, str) {
-    if (!str) {
-        return url;
-    }
-
     url.hostname = str;
     url.host = str + (url.port ? ':' + url.port : '');
     return url;
