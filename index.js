@@ -1,6 +1,6 @@
-var simplePathPattern = /^(\/?[a-z0-9-._~!$&'()*+,;=:@%\/]+)(\?([a-z0-9!$&'()*+-,;=:#\[\]@\/\?%]+)?)?(#[a-z0-9!$&'()*+,;=:#-\[\]@\/\?%]+)?$/i,
-    giantPattern = /^([a-z0-9\.\+-]+:)?\/\/(([a-z0-9!$&'()*+-,;=#\[\]@\/\?%]+:[a-z0-9!$&'()*+-,;=#\[\]@\/\?%]+)@)?([a-z0-9\-\.]+)(:([0-9]+))?(\/[a-z0-9-._~!$&'()*+,;=:@%\/]+)(\?[a-z0-9!$&'()*+-,;=:#\[\]@\/\?%]+)(#[a-z0-9!$&'()*+,;=:#-\[\]@\/\?%]+)$/i,
-    protocolPattern = /^[a-z0-9\.\+-]+:/,
+var simplePathPattern = /^(\/?[a-z0-9-._~!$&'()*+,;=:@%\/]+)(\?([a-z0-9!$&'()*+-,;=:\[\]@\/\?%]+)?)?(#[a-z0-9!$&'()*+,;=:#-\[\]@\/\?%]+)?$/i,
+    giantPattern = /^([a-z0-9\.\+-]+:)?\/\/(([a-z0-9!$&'()*+-,;=#\[\]@\/\?%]+:[a-z0-9!$&'()*+-,;=#\[\]@\/\?%]+)@)?([a-z0-9\-\._]+)(:([0-9]+))?(\/([a-z0-9-._~!$&'()*+,;=:@%\/]+)?)?(\?[a-z0-9!$&'()*+-,;=:\[\]@\/\?%]+)?(#[a-z0-9!$&'()*+,;=:#-\[\]@\/\?%]+)?$/i,
+    protocolPattern = /^[a-z0-9\.\+-]+:/i,
     queryStringPartPattern = /\??([^\?\=\&]+)\=?([^\=\&]+)?/g;
 
 var slash = 0x2F,
@@ -24,6 +24,63 @@ function Url() {
     this.hash = null;
 }
 
+Url.prototype.format = function() {
+
+    var auth = this.auth || '';
+    if (auth) {
+        auth = encodeURIComponent(auth);
+        auth = auth.replace(/%3A/i, ':');
+        auth += '@';
+    }
+
+    var protocol = this.protocol || '',
+        pathname = this.pathname || '',
+        hash = this.hash || '',
+        host = false,
+        query = '';
+
+    if (this.host) {
+        host = auth + this.host;
+    } else if (this.hostname) {
+        host = auth + (this.hostname.indexOf(':') === -1 ?
+            this.hostname :
+            '[' + this.hostname + ']');
+        if (this.port) {
+            host += ':' + this.port;
+        }
+    }
+
+    if (this.query &&
+        util.isObject(this.query) &&
+        Object.keys(this.query).length) {
+        query = querystring.stringify(this.query);
+    }
+
+    var search = this.search || (query && ('?' + query)) || '';
+
+    if (protocol && protocol.substr(-1) !== ':') protocol += ':';
+
+    // only the slashedProtocols get the //.  Not mailto:, xmpp:, etc.
+    // unless they had them to begin with.
+    if (this.slashes ||
+        (!protocol || slashedProtocol[protocol]) && host !== false) {
+        host = '//' + (host || '');
+        if (pathname && pathname.charAt(0) !== '/') pathname = '/' + pathname;
+    } else if (!host) {
+        host = '';
+    }
+
+    if (hash && hash.charAt(0) !== '#') hash = '#' + hash;
+    if (search && search.charAt(0) !== '?') search = '?' + search;
+
+    pathname = pathname.replace(/[?#]/g, function(match) {
+        return encodeURIComponent(match);
+    });
+    search = search.replace('#', '%23');
+
+    return protocol + host + pathname + search + hash;
+};
+
 Url.prototype.getPathParams = function (template) {
     return parseTemplate(this, template);
 };
@@ -33,11 +90,12 @@ var shouldParseQueryString;
 module.exports.parse = parse;
 function parse(str, parseQueryString, slashesDenoteHost) {
     var url = new Url();
-    url.href = str;
 
     if (!str || typeof str !== 'string') {
         return url;
     }
+
+    url.href = str;
 
     shouldParseQueryString = parseQueryString;
     return decompose(url, str);
@@ -76,12 +134,14 @@ function decomposeUrl(url, str) {
 
     if (matches) {
         url.protocol = matches[1] || null;
-        url.auth = matches[3] || null;
+        if (matches[3]) {
+            url.auth = decodeURIComponent(matches[3]);
+        }
         url.port = matches[6] || null;
         decomposeHostname(url, matches[4]);
-        decomposeQueryString(url, matches[8]);
+        decomposeQueryString(url, matches[9]);
         decomposePathname(url, matches[7]);
-        decomposeHash(url, matches[9]);
+        decomposeHash(url, matches[10]);
     }
     return url;
 }
@@ -105,7 +165,19 @@ function decomposeHostname(url, str) {
 
 function decomposePathname(url, str) {
     url.pathname = str;
-    url.path = str + (url.search ? url.search : '');
+
+    var path = '';
+    if (str) {
+        path = str;
+    }
+
+    if (url.search) {
+        path += url.search;
+    }
+
+    if (path) {
+        url.path = path;
+    }
     return url;
 }
 
@@ -148,7 +220,13 @@ function decomposeHash(url, str) {
 
 module.exports.format = format;
 function format(obj) {
-    //TODO: Implement this.
+    if (typeof obj === 'string') {
+        obj = parse(obj);
+    } else if (!(obj instanceof Url)) {
+        return Url.prototype.format.call(obj);
+    } else {
+        return obj.format();
+    }
 }
 
 module.exports.resolve = resolve;

@@ -1,7 +1,7 @@
 var decomposeUrl = require('..'),
     should = require('should');
 
-describe('decompose-url(url)', function () {
+describe('decompose-url.parse(url)', function () {
     it('should parse an absolute URL', function () {
         var parsed = decomposeUrl.parse('https://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules');
 
@@ -354,7 +354,7 @@ describe('decompose-url(url)', function () {
         (!!!parsed.search).should.be.true;
         (!!!parsed.query).should.be.true;
         (!!!parsed.hash).should.be.true;
-        parsed.href.should.be.exactly('');
+        (!!!parsed.href).should.be.true;
     });
     it('shouldn\'t parse a malformed URL', function () {
         var parsed = decomposeUrl.parse('(╯°□°)╯︵ ┻━┻');
@@ -388,7 +388,7 @@ describe('decompose-url(url)', function () {
     });
 });
 
-describe('decompose-url(url, template)', function () {
+describe('decompose-url.parse(url).getPathParams(template)', function () {
     it('should parse an absolute URL with a template', function () {
         var parsed = decomposeUrl.parse('http://test.example.com:8000/one/two/three?value=abc&value2=123#david-rules');
 
