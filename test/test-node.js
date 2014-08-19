@@ -244,7 +244,7 @@ describe('Node.js URL Tests', function () {
         (!!!parsed.hash).should.be.true;
         parsed.href.should.be.exactly('www.example.com');
     });
-    it.skip('should parse an absolute URL with an empty port', function () {
+    it('should parse an absolute URL with an empty port', function () {
         var parsed = decomposeUrl.parse('http://example.com:');
 
         parsed.protocol.should.be.exactly('http:');
