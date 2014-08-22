@@ -1,7 +1,8 @@
-var decomposeUrl = require('..'),
+var decomposeUrl = require('../index'),
     should = require('should');
 
-describe.skip('NodeJS Tests', function () {
+// Tests taken from NodeJS, available here: https://github.com/joyent/node/blob/912b5e05811fd24f09f9d65200a1561a4482f166/test/simple/test-url.js
+describe('NodeJS Tests', function () {
     describe('NodeJS Parse Tests', function () {
         var parseTests = {
             '//some_path': {
@@ -726,6 +727,9 @@ describe.skip('NodeJS Tests', function () {
             it('Should parse ' + key, function () {
                 var actual = decomposeUrl.parse(key),
                     expected = parseTests[key];
+                if (key === 'http:\\\\evil-phisher\\foo.html#h\\a\\s\\h') {
+                    debugger;
+                }
                 Object.keys(expected).forEach(function (key) {
                     actual[key].should.be.equal(expected[key]);
                 });
@@ -753,7 +757,7 @@ describe.skip('NodeJS Tests', function () {
         });
     });
 
-    describe('NodeJS Parse Tests With Query String', function () {
+    describe('NodeJS Query String Parse Tests', function () {
         var parseTestsWithQueryString = {
             '/foo/bar?baz=quux#frag': {
                 'href': '/foo/bar?baz=quux#frag',
@@ -778,7 +782,7 @@ describe.skip('NodeJS Tests', function () {
             }
         };
         Object.keys(parseTestsWithQueryString).forEach(function (key) {
-            it('Should parse ' + key, function () {
+            it('Should parse query string ' + key, function () {
                 var actual = decomposeUrl.parse(key),
                     expected = parseTestsWithQueryString[key];
                 Object.keys(expected).forEach(function (key) {

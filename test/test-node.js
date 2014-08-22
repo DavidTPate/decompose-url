@@ -168,7 +168,7 @@ describe('Node.js URL Tests', function () {
         parsed.href.should.be.exactly('http://user:pass@example.com:8000/foo/bar?baz=quux#frag');
     });
     it('should parse a protocol relative URL with everything', function () {
-        var parsed = decomposeUrl.parse('//user:pass@example.com:8000/foo/bar?baz=quux#frag');
+        var parsed = decomposeUrl.parse('//user:pass@example.com:8000/foo/bar?baz=quux#frag', null, true);
 
         (!parsed.protocol).should.be.true;
         parsed.auth.should.be.exactly('user:pass');

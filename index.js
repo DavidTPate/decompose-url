@@ -1,5 +1,5 @@
 var simplePathPattern = /^(\/?[a-z0-9-._~!$&'()*+,;=:@%\/]+)(\?([a-z0-9!$&'()*+-,;=:\[\]@\/\?%]+)?)?(#[a-z0-9!$&'()*+,;=:#-\[\]@\/\?%]+)?$/i,
-    giantPattern = /^([a-z0-9\.\+-]+:)?\/\/(([a-z0-9!$&'()*+-,;=#\[\]@\/\?%]+:[a-z0-9!$&'()*+-,;=#\[\]@\/\?%]+)@)?([a-z0-9\-\._]+)(:([0-9]+)?)?(\/([a-z0-9-._~!$&'()*+,;=:@%\/]+)?)?(\?[a-z0-9!$&'()*+-,;=:\[\]@\/\?%]+)?(#[a-z0-9!$&'()*+,;=:#-\[\]@\/\?%]+)?$/i,
+    giantPattern = /^([a-z0-9\.\+-]+:)?(\/\/)(([a-z0-9!$&'()*+-,;=#\[\]@\/\?%]+:[a-z0-9!$&'()*+-,;=#\[\]@\/\?%]+)@)?([a-z0-9\-\._]+)(:([0-9]+)?)?(\/([a-z0-9-._~!$&'()*+,;=:@%\/]+)?)?(\?[a-z0-9!$&'()*+-,;=:\[\]@\/\?%]+)?(#[a-z0-9!$&'()*+,;=:#-\[\]@\/\?%]+)?$/i,
     protocolPattern = /^[a-z0-9\.\+-]+:/i,
     queryStringPartPattern = /\??([^\?\=\&]+)\=?([^\=\&]+)?/g;
 
@@ -7,6 +7,66 @@ var slash = 0x2F,
     question = 0x3F,
     octothorpe = 0x23,
     colon = 0x3A;
+
+    // Build escaping character sets, so we don't take the penalty at runtime.
+    // RFC 2396: characters reserved for delimiting URLs.
+    // We actually just auto-escape these.
+var delims = ['<', '>', '"', '`', ' ', '\r', '\n', '\t'],
+    delimsObj = (function() {
+        var obj = {};
+        delims.forEach(function(value) {
+            obj[value] = encodeURIComponent(value);
+        });
+        return obj;
+    })(),
+    delimsRegExp = new RegExp((function() {
+        var str = '';
+        delims.forEach(function(value) {
+            if (str) {
+                str += '|';
+            }
+            str += '\\x' + delimsObj[value].slice(1);
+        });
+        return str;
+    }()), 'g'),
+    // RFC 2396: characters not allowed for various reasons.
+    unwise = ['{', '}', '|', '\\', '^', '`'].concat(delims),
+    unwiseObj = (function() {
+        var obj = {};
+        unwise.forEach(function(value) {
+            obj[value] = encodeURIComponent(value);
+        });
+        return obj;
+    })(),
+    unwiseRegExp = new RegExp((function() {
+        var str = '';
+        unwise.forEach(function(value) {
+            if (str) {
+                str += '|';
+            }
+            str += '\\x' + unwiseObj[value].slice(1);
+        });
+        return str;
+    }()), 'g'),
+    // Allowed by RFCs, but cause of XSS attacks.  Always escape these.
+    autoEscape = ['\''].concat(unwise),
+    autoEscapeObj = (function() {
+        var obj = {};
+        autoEscape.forEach(function(value) {
+            obj[value] = encodeURIComponent(value);
+        });
+        return obj;
+    })(),
+    autoEscapeRegExp = new RegExp((function() {
+        var str = '';
+        autoEscape.forEach(function(value) {
+            if (str) {
+                str += '|';
+            }
+            str += '\\x' + autoEscapeObj[value].slice(1);
+        });
+        return str;
+    }()), 'g');
 
 function Url() {
     this.href = null;
@@ -24,8 +84,7 @@ function Url() {
     this.hash = null;
 }
 
-Url.prototype.format = function() {
-
+Url.prototype.format = function () {
     var auth = this.auth || '';
     if (auth) {
         auth = encodeURIComponent(auth);
@@ -73,7 +132,7 @@ Url.prototype.format = function() {
     if (hash && hash.charAt(0) !== '#') hash = '#' + hash;
     if (search && search.charAt(0) !== '?') search = '?' + search;
 
-    pathname = pathname.replace(/[?#]/g, function(match) {
+    pathname = pathname.replace(/[?#]/g, function (match) {
         return encodeURIComponent(match);
     });
     search = search.replace('#', '%23');
@@ -85,72 +144,75 @@ Url.prototype.getPathParams = function (template) {
     return parseTemplate(this, template);
 };
 
-var shouldParseQueryString;
-
 module.exports.parse = parse;
 function parse(str, parseQueryString, slashesDenoteHost) {
-    var url = new Url();
-
     if (!str || typeof str !== 'string') {
-        return url;
+        throw new TypeError("Parameter 'url' must be a string, not " + typeof str);
     }
 
+    var url = new Url();
     url.href = str;
 
-    shouldParseQueryString = parseQueryString;
-    return decompose(url, str);
+    return decompose(url, str, parseQueryString, slashesDenoteHost);
 }
 
-function decompose(url, str) {
+function decompose(url, str, parseQueryString, slashesDenoteHost) {
     var charCode = str.charCodeAt(0);
 
+    // First, make 100% sure that any "autoEscape" chars get escaped, even if encodeURIComponent doesn't think they need to be.
+    str = str.replace(autoEscapeRegExp, function(str) {
+        return autoEscapeObj[str] || str;
+    });
+
     if (charCode === slash) {
-        if (str.charCodeAt(1) === slash) {
+        // NodeJS only parses a Protocol Relative URL properly when slashesDenoteHost is true, doing the same here.
+        if (slashesDenoteHost && str.charCodeAt(1) === slash) {
             // Protocol Relative
-            decomposeUrl(url, str);
+            decomposeUrl(url, str, parseQueryString);
         } else {
             // Root Relative
-            decomposePath(url, str);
+            decomposePath(url, str, parseQueryString);
         }
     } else if (charCode === question) {
         // Query String
-        decomposeQueryString(url, str);
+        decomposeQueryString(url, str, parseQueryString);
     } else if (charCode === octothorpe) {
         // Hash value
         decomposeHash(url, str);
     } else if (protocolPattern.exec(str)) {
         // Full URL
-        decomposeUrl(url, str);
+        decomposeUrl(url, str, parseQueryString);
     } else {
         // Document Relative
-        decomposePath(url, str);
+        decomposePath(url, str, parseQueryString);
     }
 
     return url;
 }
 
-function decomposeUrl(url, str) {
+function decomposeUrl(url, str, parseQueryString) {
     var matches = giantPattern.exec(str);
 
     if (matches) {
         url.protocol = matches[1] || null;
-        if (matches[3]) {
-            url.auth = decodeURIComponent(matches[3]);
+        if (matches[4]) {
+            url.auth = decodeURIComponent(matches[4]);
         }
-        url.port = matches[6] || null;
-        decomposeHostname(url, matches[4]);
-        decomposeQueryString(url, matches[9]);
-        decomposePathname(url, matches[7]);
-        decomposeHash(url, matches[10]);
+        url.port = matches[7] || null;
+        url.slashes = matches[2] && matches[2].charCodeAt(0) === 0x2F && matches[2].charCodeAt(1) === 0x2F;
+        decomposeHostname(url, matches[5]);
+        decomposeQueryString(url, matches[10], parseQueryString);
+        decomposePathname(url, matches[8]);
+        decomposeHash(url, matches[11]);
     }
     return url;
 }
 
-function decomposePath(url, str) {
+function decomposePath(url, str, parseQueryString) {
     var matches = simplePathPattern.exec(str);
 
     if (matches) {
-        decomposeQueryString(url, matches[2]);
+        decomposeQueryString(url, matches[2], parseQueryString);
         decomposePathname(url, matches[1]);
         decomposeHash(url, matches[4]);
     }
@@ -181,13 +243,13 @@ function decomposePathname(url, str) {
     return url;
 }
 
-function decomposeQueryString(url, str) {
+function decomposeQueryString(url, str, parseQueryString) {
     if (!str) {
         return url;
     }
 
     url.search = str;
-    if (shouldParseQueryString) {
+    if (parseQueryString) {
         url.query = {};
 
         var matches = queryStringPartPattern.exec(str),
@@ -214,6 +276,11 @@ function decomposeQueryString(url, str) {
 }
 
 function decomposeHash(url, str) {
+    // If we have a hash value, make sure it is escaped.
+    if (str && str.length > 1) {
+        str = '#' + encodeURIComponent(str.slice(1));
+    }
+
     url.hash = str;
     return url;
 }

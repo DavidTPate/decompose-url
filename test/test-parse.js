@@ -80,7 +80,7 @@ describe('decompose-url.parse(url)', function () {
         parsed.href.should.be.exactly('http://localhost/one/two/three?value=abc&value2=123#david-rules');
     });
     it('should parse a protocol relative URL', function () {
-        var parsed = decomposeUrl.parse('//test.example.com/one/two/three?value=abc&value2=123#david-rules');
+        var parsed = decomposeUrl.parse('//test.example.com/one/two/three?value=abc&value2=123#david-rules', null, true);
 
         (!!!parsed.protocol).should.be.true;
         (!!!parsed.auth).should.be.true;
@@ -95,7 +95,7 @@ describe('decompose-url.parse(url)', function () {
         parsed.href.should.be.exactly('//test.example.com/one/two/three?value=abc&value2=123#david-rules');
     });
     it('should parse a protocol relative URL with authentication', function () {
-        var parsed = decomposeUrl.parse('//username:password@test.example.com/one/two/three?value=abc&value2=123#david-rules', true);
+        var parsed = decomposeUrl.parse('//username:password@test.example.com/one/two/three?value=abc&value2=123#david-rules', true, true);
 
         (!!!parsed.protocol).should.be.true;
         parsed.auth.should.be.exactly('username:password');
@@ -111,7 +111,7 @@ describe('decompose-url.parse(url)', function () {
         parsed.href.should.be.exactly('//username:password@test.example.com/one/two/three?value=abc&value2=123#david-rules');
     });
     it('should parse a protocol relative URL pointing to the root', function () {
-        var parsed = decomposeUrl.parse('//');
+        var parsed = decomposeUrl.parse('//', null, true);
 
         (!!!parsed.protocol).should.be.true;
         (!!!parsed.auth).should.be.true;
@@ -342,19 +342,9 @@ describe('decompose-url.parse(url)', function () {
         parsed.href.should.be.exactly('one/two/three');
     });
     it('shouldn\'t parse an empty string', function () {
-        var parsed = decomposeUrl.parse('');
-
-        (!!!parsed.protocol).should.be.true;
-        (!!!parsed.auth).should.be.true;
-        (!!!parsed.hostname).should.be.true;
-        (!!!parsed.host).should.be.true;
-        (!!!parsed.port).should.be.true;
-        (!!!parsed.pathname).should.be.true;
-        (!!!parsed.path).should.be.true;
-        (!!!parsed.search).should.be.true;
-        (!!!parsed.query).should.be.true;
-        (!!!parsed.hash).should.be.true;
-        (!!!parsed.href).should.be.true;
+        (function () {
+            decomposeUrl.parse('');
+        }).should.throw("Parameter 'url' must be a string, not " + typeof '');
     });
     it('shouldn\'t parse a malformed URL', function () {
         var parsed = decomposeUrl.parse('(╯°□°)╯︵ ┻━┻');
@@ -372,19 +362,9 @@ describe('decompose-url.parse(url)', function () {
         parsed.href.should.be.exactly('(╯°□°)╯︵ ┻━┻');
     });
     it('shouldn\'t parse an undefined URL', function () {
-        var parsed = decomposeUrl.parse(undefined);
-
-        (!!!parsed.protocol).should.be.true;
-        (!!!parsed.auth).should.be.true;
-        (!!!parsed.hostname).should.be.true;
-        (!!!parsed.host).should.be.true;
-        (!!!parsed.port).should.be.true;
-        (!!!parsed.pathname).should.be.true;
-        (!!!parsed.path).should.be.true;
-        (!!!parsed.search).should.be.true;
-        (!!!parsed.query).should.be.true;
-        (!!!parsed.hash).should.be.true;
-        (!!!parsed.href).should.be.true;
+        (function () {
+            decomposeUrl.parse(undefined);
+        }).should.throw("Parameter 'url' must be a string, not " + typeof undefined);
     });
 });
 
@@ -506,35 +486,5 @@ describe('decompose-url.parse(url).getPathParams(template)', function () {
         params.value1.should.be.exactly('one');
         (!!!params.value2).should.be.true;
         params.value3.should.be.exactly('three');
-    });
-    it('shouldn\'t parse an empty string with a template', function () {
-        var parsed = decomposeUrl.parse('', '/:value1');
-
-        (!!!parsed.protocol).should.be.true;
-        (!!!parsed.auth).should.be.true;
-        (!!!parsed.hostname).should.be.true;
-        (!!!parsed.host).should.be.true;
-        (!!!parsed.port).should.be.true;
-        (!!!parsed.pathname).should.be.true;
-        (!!!parsed.path).should.be.true;
-        (!!!parsed.search).should.be.true;
-        (!!!parsed.query).should.be.true;
-        (!!!parsed.hash).should.be.true;
-        (!!!parsed.href).should.be.true;
-    });
-    it('shouldn\'t parse a malformed URL with a template', function () {
-        var parsed = decomposeUrl.parse('(╯°□°)╯︵ ┻━┻', '/:value1');
-
-        (!!!parsed.protocol).should.be.true;
-        (!!!parsed.auth).should.be.true;
-        (!!!parsed.hostname).should.be.true;
-        (!!!parsed.host).should.be.true;
-        (!!!parsed.port).should.be.true;
-        (!!!parsed.pathname).should.be.true;
-        (!!!parsed.path).should.be.true;
-        (!!!parsed.search).should.be.true;
-        (!!!parsed.query).should.be.true;
-        (!!!parsed.hash).should.be.true;
-        parsed.href.should.be.exactly('(╯°□°)╯︵ ┻━┻');
     });
 });
