@@ -723,13 +723,32 @@ describe.skip('NodeJS Tests', function () {
             }
         };
         Object.keys(parseTests).forEach(function (key) {
-            it('Should parse ' + key, function (done) {
+            it('Should parse ' + key, function () {
                 var actual = decomposeUrl.parse(key),
                     expected = parseTests[key];
                 Object.keys(expected).forEach(function (key) {
                     actual[key].should.be.equal(expected[key]);
                 });
-                done();
+            });
+        });
+    });
+
+    describe('NodeJS Falsey Parse Tests', function () {
+        var parseFalseyTests = [
+            undefined,
+            null,
+            true,
+            false,
+            0.0,
+            0,
+            [],
+            {}
+        ];
+        parseFalseyTests.forEach(function (test) {
+            it('Should Error When Parsing Non-String ' + test, function () {
+                (function () {
+                    decomposeUrl.parse(test);
+                }).should.throw("Parameter 'url' must be a string, not " + typeof test);
             });
         });
     });
@@ -759,13 +778,12 @@ describe.skip('NodeJS Tests', function () {
             }
         };
         Object.keys(parseTestsWithQueryString).forEach(function (key) {
-            it('Should parse ' + key, function (done) {
+            it('Should parse ' + key, function () {
                 var actual = decomposeUrl.parse(key),
                     expected = parseTestsWithQueryString[key];
                 Object.keys(expected).forEach(function (key) {
                     actual[key].should.be.equal(expected[key]);
                 });
-                done();
             });
         });
     });
@@ -957,13 +975,12 @@ describe.skip('NodeJS Tests', function () {
             }
         };
         Object.keys(formatTests).forEach(function (key) {
-            it('Should parse ' + key, function (done) {
+            it('Should parse ' + key, function () {
                 var actual = decomposeUrl.parse(key),
                     expected = formatTests[key];
                 Object.keys(expected).forEach(function (key) {
                     actual[key].should.be.equal(expected[key]);
                 });
-                done();
             });
         });
     });
@@ -1006,43 +1023,23 @@ describe.skip('NodeJS Tests', function () {
             ['/foo/bar/baz', '/../etc/passwd', '/etc/passwd']
         ];
         relativeTests.forEach(function (test) {
-            it('Should resolve from ' + test[0] + ' to ' + test[1], function (done) {
+            it('Should resolve from ' + test[0] + ' to ' + test[1], function () {
                 var actual = decomposeUrl.resolve(test[0], test[1]),
                     expected = test[2];
                 actual.should.be.equal(expected);
-                done();
             });
         });
     });
 
-    /*
-     // https://github.com/joyent/node/issues/568
-     [
-     undefined,
-     null,
-     true,
-     false,
-     0.0,
-     0,
-     [],
-     {}
-     ].forEach(function (val) {
-     assert.throws(function () {
-     url.parse(val);
-     }, TypeError);
-     });
-     */
-
     describe('NodeJS Resolve Tests, Round Two...Fight!', function () {
-//
-// Tests below taken from Chiron
-// http://code.google.com/p/chironjs/source/browse/trunk/src/test/http/url.js
-//
-// Copyright (c) 2002-2008 Kris Kowal <http://cixar.com/~kris.kowal>
-// used with permission under MIT License
-//
-// Changes marked with @isaacs
-
+        //
+        // Tests below taken from Chiron
+        // http://code.google.com/p/chironjs/source/browse/trunk/src/test/http/url.js
+        //
+        // Copyright (c) 2002-2008 Kris Kowal <http://cixar.com/~kris.kowal>
+        // used with permission under MIT License
+        //
+        // Changes marked with @isaacs
         var bases = [
             'http://a/b/c/d;p?q',
             'http://a/b/c/d;p?q=1/2',
@@ -1051,7 +1048,7 @@ describe.skip('NodeJS Tests', function () {
             'http:///s//a/b/c'
         ];
 
-//[to, from, result]
+        //[to, from, result]
         var relativeTests2 = [
             // http://lists.w3.org/Archives/Public/uri/2004Feb/0114.html
             ['../c', 'foo:a/b', 'foo:c'],
@@ -1321,11 +1318,10 @@ describe.skip('NodeJS Tests', function () {
                 'http://diff:auth@www.example.com/']
         ];
         relativeTests2.forEach(function (test) {
-            it('Should resolve from ' + test[0] + ' to ' + test[1], function (done) {
+            it('Should resolve from ' + test[0] + ' to ' + test[1], function () {
                 var actual = decomposeUrl.resolve(test[0], test[1]),
                     expected = test[2];
                 actual.should.be.equal(expected);
-                done();
             });
         });
     });
