@@ -55,7 +55,7 @@ var decomposedUrlWithParams = decomposeUrl('http://test.example.com:8000/one/two
 * `search` - The full search part in the URL, null if none. (eg. 'ui=1&pli=1')
 * `query` - A map of the query parameters in the URL, null if none. (eg. { 'ui': '1', 'pli': '1' })
 * `hash` - The full hash in the URL, null if none. (eg. 'inbox')
-* `hash` - The original URL that was decomposed (eg. 'http://david:l33t5auce#!@mail.google.com/mail/u/0?ui=2&pli=1#inbox')
+* `href` - The original URL that was decomposed (eg. 'http://david:l33t5auce#!@mail.google.com/mail/u/0?ui=2&pli=1#inbox')
 
 ## Benchmark
 ```bash
