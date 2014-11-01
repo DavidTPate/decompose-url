@@ -1,36 +1,37 @@
 {
-    "name": "decompose-url",
-    "description": "A quick and easy URL decomposer for breaking URLs into their constituent parts.",
-    "version": "0.1.3",
-    "author": "David Pate <me@davidtpate.com> (http://davidtpate.com)",
-    "keywords": [
-        "url",
-        "parser"
-    ],
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/DavidTPate/decompose-url"
-    },
-    "bugs": {
-        "url": "https://github.com/DavidTPate/decompose-url/issues"
-    },
-    "license": "MIT",
-    "devDependencies": {
-        "istanbul": "^0.x",
-        "mocha": "^1.x",
-        "should": "^4.x",
-        "browserify": "^5.x",
-        "benchmark": "^1.x",
-        "beautify-benchmark": "^0.x",
-        "parseurl": "^1.x",
-        "fast-url-parser": "^1.x"
-    },
-    "scripts": {
-        "bench": "node benchmark/index.js",
-        "test": "mocha --check-leaks --bail --reporter spec test/",
-        "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --check-leaks --reporter dot test/",
-        "test-travis": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --check-leaks --reporter spec test/",
-        "test-tape": "tape test/*.js",
-        "test-browser": "browserify test/*.js | testlingify",
-        "browserify": "browserify index.js --standalone decomposeUrl > decompose-url.js"
-    }}
+  "name": "decompose-url",
+  "description": "A quick and easy URL decomposer for breaking URLs into their constituent parts.",
+  "version": "0.1.3",
+  "author": "David Pate <me@davidtpate.com> (http://davidtpate.com)",
+  "keywords": [
+    "url",
+    "parser"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DavidTPate/decompose-url"
+  },
+  "bugs": {
+    "url": "https://github.com/DavidTPate/decompose-url/issues"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "istanbul": "^0.x",
+    "mocha": "^1.x",
+    "node-assertthat": "^0.2.x",
+    "browserify": "^5.x",
+    "benchmark": "^1.x",
+    "beautify-benchmark": "^0.x",
+    "parseurl": "^1.x",
+    "fast-url-parser": "^1.x"
+  },
+  "scripts": {
+    "bench": "node benchmark/index.js",
+    "test": "mocha --check-leaks --bail --reporter spec test/",
+    "test-cov": "istanbul cover node_modules/mocha/bin/_mocha -- --check-leaks --reporter dot test/",
+    "test-travis": "istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --check-leaks --reporter spec test/",
+    "test-tape": "tape test/*.js",
+    "test-browser": "browserify test/*.js | testlingify",
+    "browserify": "browserify index.js --standalone decomposeUrl > decompose-url.js"
+  }
+}
