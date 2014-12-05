@@ -11,13 +11,13 @@ suite.add({
     name: 'decomposeUrl',
     minSamples: 100,
     fn: function () {
-        decomposeUrl(testUrl);
+        decomposeUrl.parse(testUrl);
     }
 }).add({
     name: 'nativeUrl',
     minSamples: 100,
     fn: function () {
-        nativeUrl.parse(testUrl, true);
+        nativeUrl.parse(testUrl);
     }
 }).add({
     name: 'parseUrl',
@@ -29,7 +29,7 @@ suite.add({
     name: 'fastUrlParser',
     minSamples: 100,
     fn: function () {
-        fastUrlParser.parse(testUrl, true);
+        fastUrlParser.parse(testUrl);
     }
 }).on('start', function onCycle() {
     process.stdout.write('  Parsing URL ' + testUrl + '\n\n')
