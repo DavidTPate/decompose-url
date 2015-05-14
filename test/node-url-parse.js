@@ -852,17 +852,16 @@ describe('Url', function () {
 
         };
         parseTests = {
-            'http://[fe80::1]:/a/b?a=b#abc': {
+            'http://user:password@[3ffe:2a00:100:7031::1]:8080': {
                 'protocol': 'http:',
                 'slashes': true,
-                'host': '[fe80::1]',
-                'hostname': 'fe80::1',
-                'href': 'http://[fe80::1]/a/b?a=b#abc',
-                'search': '?a=b',
-                'query': 'a=b',
-                'hash': '#abc',
-                'pathname': '/a/b',
-                'path': '/a/b?a=b'
+                'auth': 'user:password',
+                'host': '[3ffe:2a00:100:7031::1]:8080',
+                'port': '8080',
+                'hostname': '3ffe:2a00:100:7031::1',
+                'href': 'http://user:password@[3ffe:2a00:100:7031::1]:8080/',
+                'pathname': '/',
+                'path': '/'
             }
         };
         Object.keys(parseTests).forEach(function (test) {

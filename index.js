@@ -7,6 +7,20 @@ exports.format = url.format;
 
 exports.Url = Url;
 
+// protocols that always contain a // bit.
+const slashedProtocol = {
+    'http': true,
+    'https': true,
+    'ftp': true,
+    'gopher': true,
+    'file': true,
+    'http:': true,
+    'https:': true,
+    'ftp:': true,
+    'gopher:': true,
+    'file:': true
+};
+
 /**
  * elements separated by forward slash ("/") are alternatives.
  */
@@ -196,6 +210,8 @@ function urlParse(url, parseQueryString, slashesDenoteHost) {
     return u;
 }
 
+Url.prototype.format = url.Url.prototype.format;
+
 Url.prototype.parse = function(url, parseQueryString, slashesDenoteHost) {
     if (typeof url !== 'string') {
         throw new TypeError("Parameter 'url' must be a string, not " + typeof url);
@@ -233,12 +249,28 @@ Url.prototype.parse = function(url, parseQueryString, slashesDenoteHost) {
         this.hostname = matches[4].toLowerCase();
     }
 
+    if (matches[5]) {
+        this.port = matches[5];
+    }
+
     if (matches[6]) {
         this.path = matches[6];
     }
 
     if (matches[7]) {
         this.pathname = matches[7];
+    }
+
+    if (slashedProtocol[this.protocol] &&
+        this.hostname && !this.pathname) {
+        this.pathname = '/';
+    }
+
+    //to support http.request
+    if (this.pathname || this.search) {
+        var p = this.pathname || '';
+        var s = this.search || '';
+        this.path = p + s;
     }
 
     if (matches[8]) {
@@ -252,4 +284,6 @@ Url.prototype.parse = function(url, parseQueryString, slashesDenoteHost) {
     if (matches[10]) {
         this.hash = matches[10];
     }
+
+    this.href = this.format();
 };
