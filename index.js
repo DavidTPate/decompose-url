@@ -21,6 +21,8 @@ const slashedProtocol = {
     'file:': true
 };
 
+const openBracket = 0x5B;
+
 /**
  * elements separated by forward slash ("/") are alternatives.
  */
@@ -135,7 +137,7 @@ var userinfo = '([' + unreserved + pctEncoded + subDelims + ':]*)';
 /**
  * IP-literal = "[" ( IPv6address / IPvFuture  ) "]"
  */
-var IPLiteral = '\\[(?:' + IPv6address + or + IPvFuture + ')\\]';
+var IPLiteral = '\\[(' + IPv6address + or + IPvFuture + ')\\]';
 
 /**
  * reg-name = *( unreserved / pct-encoded / sub-delims )
@@ -185,7 +187,7 @@ var query = '[' + pchar + '\\/\\?]*(?=#|$)'; //Finish matching either at the fra
  */
 var fragment = '[' + pchar + '\\/\\?]*';
 
-var uriRegex = new RegExp('^(' + scheme + ':)?' + '(?:\\/\\/' + authority + ')?((' + pathAbEmpty + or + pathAbsolute + or + pathRootless + ')' + '(\\?(' + query + '))?)' + '(#' + fragment + ')?$');
+var uriRegex = new RegExp('^(' + scheme + ':)?' + '(?:(\\/\\/)' + authority + ')?((' + pathAbEmpty + or + pathAbsolute + or + pathRootless + ')' + '(\\?(' + query + '))?)' + '(#' + fragment + ')?$');
 
 function Url() {
     this.protocol = null;
@@ -212,7 +214,7 @@ function urlParse(url, parseQueryString, slashesDenoteHost) {
 
 Url.prototype.format = url.Url.prototype.format;
 
-Url.prototype.parse = function(url, parseQueryString, slashesDenoteHost) {
+Url.prototype.parse = function (url, parseQueryString, slashesDenoteHost) {
     if (typeof url !== 'string') {
         throw new TypeError("Parameter 'url' must be a string, not " + typeof url);
     }
@@ -231,34 +233,41 @@ Url.prototype.parse = function(url, parseQueryString, slashesDenoteHost) {
     var matches = uriRegex.exec(rest);
     console.log(matches);
 
-    this.href = rest;
-
-    if(matches[1]) {
+    if (matches[1]) {
         this.protocol = matches[1];
     }
 
     if (matches[2]) {
-        this.auth = matches[2];
+        this.slashes = true;
     }
 
     if (matches[3]) {
-        this.host = matches[3].toLowerCase();
+        this.auth = matches[3];
     }
 
     if (matches[4]) {
-        this.hostname = matches[4].toLowerCase();
+        this.host = matches[4].toLowerCase();
     }
 
     if (matches[5]) {
-        this.port = matches[5];
-    }
-
-    if (matches[6]) {
-        this.path = matches[6];
+        this.hostname = matches[5];
+        // If we have an IPv6 of IPvFuture address, remove the brackets.
+        if (this.hostname.charCodeAt(0) === openBracket) {
+            this.hostname = matches[6];
+        }
+        this.hostname = this.hostname.toLowerCase();
     }
 
     if (matches[7]) {
-        this.pathname = matches[7];
+        this.port = matches[7];
+    }
+
+    if (matches[8]) {
+        this.path = matches[8];
+    }
+
+    if (matches[9]) {
+        this.pathname = matches[9];
     }
 
     if (slashedProtocol[this.protocol] &&
@@ -273,16 +282,16 @@ Url.prototype.parse = function(url, parseQueryString, slashesDenoteHost) {
         this.path = p + s;
     }
 
-    if (matches[8]) {
-        this.search = matches[8];
-    }
-
-    if (matches[9]) {
-        this.query = matches[9];
-    }
-
     if (matches[10]) {
-        this.hash = matches[10];
+        this.search = matches[10];
+    }
+
+    if (matches[11]) {
+        this.query = matches[11];
+    }
+
+    if (matches[12]) {
+        this.hash = matches[12];
     }
 
     this.href = this.format();
