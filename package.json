@@ -17,7 +17,7 @@
     "license": "MIT",
     "devDependencies": {
         "istanbul": "^0.x",
-        "mocha": "^3.3.0",
+        "mocha": "^7.1.0",
         "should": "^13.1.0",
         "browserify": "^14.3.0",
         "benchmark": "^2.1.4",
